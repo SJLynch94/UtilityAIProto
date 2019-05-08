@@ -4,6 +4,7 @@ using System.Collections;
 public class AttachWeapon : MonoBehaviour {
 	public Transform attachPoint;
 	public Transform Weapon;
+    //public GameObject WeaponPrefab;
 	// Use this for initialization
 	void Start () {
 		Weapon.parent = attachPoint;

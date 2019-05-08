@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    [AddComponentMenu("UtilityAILynch/Int Property")]
+    [AddComponentMenu("UtilityAIProto/Int Property")]
     public class UAI_PropertyInt : UAI_Property
     {
         public int minVal;

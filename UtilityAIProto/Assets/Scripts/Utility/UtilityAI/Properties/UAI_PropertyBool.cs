@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    [AddComponentMenu("UtilityAILynch/Bool Property")]
+    [AddComponentMenu("UtilityAIProto/Bool Property")]
     public class UAI_PropertyBool : UAI_Property
     {
         public bool startVal;

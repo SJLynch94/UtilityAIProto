@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
     int mMedBoxesAmount;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
         mTerrainWidth = mTerrain.terrainData.size.x;
         mTerrainLength = mTerrain.terrainData.size.z;

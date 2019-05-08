@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    [AddComponentMenu("UtilityAILynch/Double Property")]
+    [AddComponentMenu("UtilityAIProto/Double Property")]
     public class UAI_PropertyDouble : UAI_Property
     {
         public double minVal = 0.0d;

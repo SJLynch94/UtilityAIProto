@@ -16,6 +16,7 @@ namespace UtilityAIProto
 
         public List<string> actionHistory = new List<string>();
         public float actionTimer;
+
         public float ActionTimer
         {
             get { return actionTimer; }

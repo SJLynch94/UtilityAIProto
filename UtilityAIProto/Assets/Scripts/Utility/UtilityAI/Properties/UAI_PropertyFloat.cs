@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    [AddComponentMenu("UtilityAILynch/Float Property")]
+    [AddComponentMenu("UtilityAIProto/Float Property")]
     public class UAI_PropertyFloat : UAI_Property
     {
         public float minVal = 0.0f;
