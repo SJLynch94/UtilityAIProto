@@ -173,7 +173,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 0
     property: {fileID: 5071290547227338543}
-    weight: 2
+    weight: 0.4
     enabled: 1
 --- !u!114 &5071290546550332385
 MonoBehaviour:
@@ -3899,7 +3899,7 @@ GameObject:
   - component: {fileID: 1953919492495443902}
   m_Layer: 0
   m_Name: SoldierTest2
-  m_TagString: Untagged
+  m_TagString: AI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4017,15 +4017,15 @@ MonoBehaviour:
   - action: {fileID: 5071290547334956315}
     actionEnabled: 1
     cooldown: 2
-    cooldownTimer: 0
+    cooldownTimer: 1
   - action: {fileID: 5071290546324505491}
     actionEnabled: 1
     cooldown: 1
-    cooldownTimer: 0
+    cooldownTimer: 2
   - action: {fileID: 5071290548088887815}
     actionEnabled: 1
     cooldown: 1
-    cooldownTimer: 0
+    cooldownTimer: 2
   - action: {fileID: 5071290547761482706}
     actionEnabled: 1
     cooldown: 1
@@ -4745,7 +4745,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 0
     property: {fileID: 5071290548092576919}
-    weight: 1
+    weight: 0.5
     enabled: 1
   - utilityCurve:
       serializedVersion: 2
@@ -4772,6 +4772,42 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 0
     property: {fileID: 5071290546275602240}
+    weight: 0.4
+    enabled: 1
+  - utilityCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.49895954
+        value: 0.49843934
+        inSlope: 3.0002496
+        outSlope: 3.0002496
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.05503896
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+    property: {fileID: 1661087471910127578}
     weight: 1
     enabled: 1
 --- !u!1 &5071290547761482704
@@ -5013,7 +5049,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 0
     property: {fileID: 5071290547289061718}
-    weight: 2
+    weight: 0.7
     enabled: 1
 --- !u!1 &5071290548092576918
 GameObject:

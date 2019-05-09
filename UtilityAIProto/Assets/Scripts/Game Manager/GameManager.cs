@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour {
     public GameObject mAmmoBoxPrefab;
     public Terrain mTerrain;
 
+    List<AmmoBox> mAmmoList;
+    List<MedBox> mMedList;
+
     float mTerrainWidth;
     float mTerrainLength;
     float mXTerrainPos;
@@ -31,27 +34,78 @@ public class GameManager : MonoBehaviour {
         mXTerrainPos = mTerrain.transform.position.x;
         mZTerrainPos = mTerrain.transform.position.z;
 
-        for (var i = 0; i < mAmmoBoxesAmount; ++i)
-        {
-            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
-            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
-            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
-            mYVal += mYOffset;
-            GameObject g = Instantiate(mAmmoBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
-        }
+        //for (var i = 0; i < mAmmoBoxesAmount; ++i)
+        //{
+        //    float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+        //    float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+        //    mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+        //    mYVal += mYOffset;
+        //    GameObject g = Instantiate(mAmmoBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
+        //}
 
-        for(var i = 0; i < mMedBoxesAmount; ++i)
-        {
-            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
-            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
-            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
-            mYVal += mYOffset;
-            GameObject g = Instantiate(mMedBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
-        }
+        //for(var i = 0; i < mMedBoxesAmount; ++i)
+        //{
+        //    float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+        //    float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+        //    mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+        //    mYVal += mYOffset;
+        //    GameObject g = Instantiate(mMedBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
+        //}
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void SpawnAmmoBoxes()
+    {
+        ClearAmmoBoxes();
+        mTerrainWidth = mTerrain.terrainData.size.x;
+        mTerrainLength = mTerrain.terrainData.size.z;
+
+        mXTerrainPos = mTerrain.transform.position.x;
+        mZTerrainPos = mTerrain.transform.position.z;
+        GameObject g;
+        for (var i = 0; i < mAmmoBoxesAmount; ++i)
+        {
+            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+            mYVal += mYOffset;
+            g = Instantiate(mAmmoBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
+            mAmmoList.Add(g.GetComponent<AmmoBox>());
+        }
+    }
+
+    public void SpawnMedBoxes()
+    {
+        mTerrainWidth = mTerrain.terrainData.size.x;
+        mTerrainLength = mTerrain.terrainData.size.z;
+
+        mXTerrainPos = mTerrain.transform.position.x;
+        mZTerrainPos = mTerrain.transform.position.z;
+        GameObject g;
+        for (var i = 0; i < mMedBoxesAmount; ++i)
+        {
+            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+            mYVal += mYOffset;
+            g = Instantiate(mMedBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
+            mMedList.Add(g.GetComponent<MedBox>());
+        }
+    }
+
+    public void ClearAmmoBoxes()
+    {
+        foreach (var w in mAmmoList) if (w && w.gameObject) DestroyImmediate(w.gameObject);
+        mAmmoList.Clear();
+    }
+
+    public void ClearMedBoxes()
+    {
+        foreach (var w in mMedList) if (w && w.gameObject) DestroyImmediate(w.gameObject);
+        mMedList.Clear();
+    }
 }

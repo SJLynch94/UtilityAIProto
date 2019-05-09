@@ -225,8 +225,8 @@ public class AILogic : MonoBehaviour
 
         if (mAmmoBoxes.Count <= 0)
         {
-            //mAmmo -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
-            mAgent;
+            mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
+            //mAgent;
             return;
         }
 
@@ -257,7 +257,7 @@ public class AILogic : MonoBehaviour
 
         if (mMedBoxes.Count <= 0)
         {
-            mAmmo -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
+            mHealth.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
         }
 
         for (var i = 0; i < mMedBoxes.Count; ++i)
