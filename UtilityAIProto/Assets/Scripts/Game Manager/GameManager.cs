@@ -9,6 +9,11 @@ public class GameManager : MonoBehaviour {
     public GameObject mAmmoBoxPrefab;
     public Terrain mTerrain;
 
+    [SerializeField]
+    public float mAIAmount;
+    public GameObject AI;
+
+    List<AILogic> mAIList;
     List<AmmoBox> mAmmoList;
     List<MedBox> mMedList;
 
@@ -17,7 +22,7 @@ public class GameManager : MonoBehaviour {
     float mXTerrainPos;
     float mZTerrainPos;
     float mYVal;
-    public float mYOffset = 0.5f;
+    public float mYOffset = 0.2f;
 
     [SerializeField]
     int mAmmoBoxesAmount;
@@ -33,24 +38,6 @@ public class GameManager : MonoBehaviour {
 
         mXTerrainPos = mTerrain.transform.position.x;
         mZTerrainPos = mTerrain.transform.position.z;
-
-        //for (var i = 0; i < mAmmoBoxesAmount; ++i)
-        //{
-        //    float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
-        //    float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
-        //    mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
-        //    mYVal += mYOffset;
-        //    GameObject g = Instantiate(mAmmoBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
-        //}
-
-        //for(var i = 0; i < mMedBoxesAmount; ++i)
-        //{
-        //    float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
-        //    float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
-        //    mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
-        //    mYVal += mYOffset;
-        //    GameObject g = Instantiate(mMedBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
-        //}
     }
 	
 	// Update is called once per frame
@@ -80,6 +67,7 @@ public class GameManager : MonoBehaviour {
 
     public void SpawnMedBoxes()
     {
+        ClearMedBoxes();
         mTerrainWidth = mTerrain.terrainData.size.x;
         mTerrainLength = mTerrain.terrainData.size.z;
 
@@ -95,6 +83,32 @@ public class GameManager : MonoBehaviour {
             g = Instantiate(mMedBoxPrefab, new Vector3(rx, mYVal, rz), Quaternion.identity);
             mMedList.Add(g.GetComponent<MedBox>());
         }
+    }
+
+    public void SpawnAI()
+    {
+        ClearAI();
+        mTerrainWidth = mTerrain.terrainData.size.x;
+        mTerrainLength = mTerrain.terrainData.size.z;
+
+        mXTerrainPos = mTerrain.transform.position.x;
+        mZTerrainPos = mTerrain.transform.position.z;
+        GameObject g;
+        for (var i = 0; i < mAIAmount; ++i)
+        {
+            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+            mYVal += mYOffset;
+            g = Instantiate(AI, new Vector3(rx, mYVal, rz), Quaternion.identity);
+            mAIList.Add(g.GetComponent<AILogic>());
+        }
+    }
+
+    public void ClearAI()
+    {
+        foreach (var w in mAIList) if (w && w.gameObject) DestroyImmediate(w.gameObject);
+        mAIList.Clear();
     }
 
     public void ClearAmmoBoxes()

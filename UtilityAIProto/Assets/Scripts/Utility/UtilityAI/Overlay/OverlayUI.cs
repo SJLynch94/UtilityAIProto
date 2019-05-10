@@ -14,7 +14,7 @@ namespace UtilityAIProto
         private UAI_Agent displayedAgent;
         private UAI_Consideration displayedConsideration, displayedActionConsideration;
         private bool bDisplayCurve = false;
-        private bool bDisplayAgent = false;
+        private bool bDisplayingAgent = false;
         private bool bDisplayActionCurve = false;
 
         public GameObject ModifiablePropertyElement, PropertyElement, considerationElement, actionElement, agentElement, historyElement,
@@ -73,6 +73,7 @@ namespace UtilityAIProto
 
             agents = FindObjectsOfType(typeof(UAI_Agent)) as UAI_Agent[];
 
+            //// Add Agents to the UI Agents
             for(var i = 0; i < agents.Length; ++i)
             {
                 GameObject tmpAgent = Instantiate(agentElement, new Vector3(agentContent.transform.position.x + 100,
@@ -80,6 +81,7 @@ namespace UtilityAIProto
                     agentContent.transform.position.z), Quaternion.identity) as GameObject;
                 tmpAgent.transform.SetParent(agentContent.transform);
                 tmpAgent.GetComponent<OverlayUIAgentElement>().SetAgent(agents[i]);
+                agentElements.Add(tmpAgent);
             }
             agentContent.GetComponent<RectTransform>().sizeDelta = new Vector2(200, agentElements.Count * 22);
             utilitySpeedText.text = "Speed: " + UAI_Time.speed.ToString("0.00") + "x";
@@ -112,7 +114,7 @@ namespace UtilityAIProto
             SelectedPropertyConsideration = null;
             SelectedActionConsideration = null;
 
-
+            //// If true deselect other agents
             if (!selected)
             {
                 if (displayedAgent != null)
@@ -128,7 +130,7 @@ namespace UtilityAIProto
                 }
 
                 displayedAgent = agent;
-                bDisplayAgent = true;
+                bDisplayingAgent = true;
 
                 for (var i = 0; i < agent.GetComponentsInChildren<UAI_Property>().Length; ++i)
                 {
@@ -146,7 +148,7 @@ namespace UtilityAIProto
                     }
                     else
                     {
-                        tmpProp = Instantiate(ModifiablePropertyElement, new Vector3(propertyContent.transform.position.x, 
+                        tmpProp = Instantiate(PropertyElement, new Vector3(propertyContent.transform.position.x, 
                             considerationContent.transform.position.y + propertyElements.Count * -27,
                             considerationContent.transform.position.z), Quaternion.identity) as GameObject;
                     }
@@ -156,6 +158,8 @@ namespace UtilityAIProto
                 }
                 propertyContent.GetComponent<RectTransform>().sizeDelta = new Vector2(200, propertyElements.Count * 27);
 
+
+                //// Add Agents Actions to the Action UI
                 for (var i = 0; i < agent.linkedActions.Count; ++i)
                 {
                     GameObject tmpAct = Instantiate(actionElement, new Vector3(actionContent.transform.position.x + 100, 
@@ -165,10 +169,11 @@ namespace UtilityAIProto
                     tmpAct.GetComponent<OverlayUIActionElement>().SetAction(agent.linkedActions[i].action);
                     actionElements.Add(tmpAct);
                 }
+                actionContent.GetComponent<RectTransform>().sizeDelta = new Vector2(200, actionElements.Count * 27);
             }
             else
             {
-                bDisplayAgent = false;
+                bDisplayingAgent = false;
                 displayedAgent = null;
             }
 
@@ -176,7 +181,7 @@ namespace UtilityAIProto
 
         public void DisplayConsiderations(UAI_Property property, bool selected)
         {
-            for (int i = 0; i < considerationElements.Count; i++)
+            for (var i = 0; i < considerationElements.Count; ++i)
             {
                 Destroy(considerationElements[i]);
             }
@@ -186,7 +191,7 @@ namespace UtilityAIProto
             {
                 if (selectedProperty != null)
                 {
-                    for (int i = 0; i < propertyElements.Count; i++)
+                    for (var i = 0; i < propertyElements.Count; ++i)
                     {
                         UAI_Property tmpProp = propertyElements[i].GetComponent<OverlayUIPropertyElement>().Property;
                         if (selectedProperty == tmpProp)
@@ -197,9 +202,9 @@ namespace UtilityAIProto
                     }
                 }
 
-                for (int i = 0; i < displayedAgent.linkedActions.Count; i++)
+                for (var i = 0; i < displayedAgent.linkedActions.Count; ++i)
                 {
-                    for (int j = 0; j < displayedAgent.linkedActions[i].action.considerations.Count; j++)
+                    for (var j = 0; j < displayedAgent.linkedActions[i].action.considerations.Count; ++j)
                     {
                         if (displayedAgent.linkedActions[i].action.considerations[j].property == property)
                         {
@@ -232,7 +237,7 @@ namespace UtilityAIProto
 
         public void DisplayActionConsiderations(UAI_Action action, bool selected)
         {
-            for (int i = 0; i < actionConsiderationElements.Count; i++)
+            for (var i = 0; i < actionConsiderationElements.Count; ++i)
             {
                 Destroy(actionConsiderationElements[i]);
             }
@@ -242,7 +247,7 @@ namespace UtilityAIProto
             {
                 if (selectedAction != null)
                 {
-                    for (int i = 0; i < actionElements.Count; i++)
+                    for (var i = 0; i < actionElements.Count; ++i)
                     {
                         UAI_Action tmpAction = actionElements[i].GetComponent<OverlayUIActionElement>().Action;
                         if (selectedAction == tmpAction)
@@ -253,7 +258,7 @@ namespace UtilityAIProto
                     }
                 }
 
-                for (int i = 0; i < action.considerations.Count; i++)
+                for (var i = 0; i < action.considerations.Count; ++i)
                 {
                     GameObject tmpCon = Instantiate(considerationElement, new Vector3(actionConsiderationContent.transform.position.x,
                                  actionConsiderationContent.transform.position.y + actionConsiderationElements.Count * -27,
@@ -287,7 +292,7 @@ namespace UtilityAIProto
                 {
                     if (selectedActionConsideration != null)
                     {
-                        for (int i = 0; i < actionConsiderationElements.Count; i++)
+                        for (var i = 0; i < actionConsiderationElements.Count; ++i)
                         {
                             UAI_Consideration tmpCon = actionConsiderationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
                             if (selectedActionConsideration == tmpCon)
@@ -307,7 +312,7 @@ namespace UtilityAIProto
                 {
                     if (selectedPropertyConsideration != null)
                     {
-                        for (int i = 0; i < considerationElements.Count; i++)
+                        for (var i = 0; i < considerationElements.Count; ++i)
                         {
                             UAI_Consideration tmpCon = considerationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
                             if (selectedPropertyConsideration == tmpCon)
@@ -344,7 +349,7 @@ namespace UtilityAIProto
         private void BuildUtilityCurve(UAI_Consideration consideration, bool isActionCon)
         {
             Texture2D texture = new Texture2D(128, 128, TextureFormat.RGBA32, false);
-            for (int i = 0; i < 128; i++)
+            for (var i = 0; i < 128; ++i)
             {
                 int y = Mathf.FloorToInt(consideration.utilityCurve.Evaluate(i / 128.0f) * 128.0f);
                 texture.SetPixel(i, y, Color.black);
@@ -437,42 +442,42 @@ namespace UtilityAIProto
         // Update is called once per frame
         void Update()
         {
-            for (int i = 0; i < propertyElements.Count; i++)
+            for (var i = 0; i < propertyElements.Count; ++i)
             {
                 propertyElements[i].GetComponent<OverlayUIPropertyElement>().SetPropertyUI();
             }
 
-            for (int i = 0; i < considerationElements.Count; i++)
+            for (var i = 0; i < considerationElements.Count; ++i)
             {
                 considerationElements[i].GetComponent<OverlayUIConsiderationElement>().SetConsiderationUI();
             }
 
-            for (int i = 0; i < actionConsiderationElements.Count; i++)
+            for (var i = 0; i < actionConsiderationElements.Count; ++i)
             {
                 actionConsiderationElements[i].GetComponent<OverlayUIConsiderationElement>().SetConsiderationUI();
             }
 
-            for (int i = 0; i < actionElements.Count; i++)
+            for (var i = 0; i < actionElements.Count; ++i)
             {
                 actionElements[i].GetComponent<OverlayUIActionElement>().SetActionUI();
             }
 
-            if (bDisplayAgent)
+            if (bDisplayingAgent)
             {
                 currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
                 actionTimerText.text = "Action Time: " + displayedAgent.ActionTimer.ToString("0.00");
             }
 
-            for (int i = 0; i < historyElements.Count; i++)
+            for (var i = 0; i < historyElements.Count; ++i)
             {
                 Destroy(historyElements[i]);
             }
 
             historyElements.Clear();
 
-            if (bDisplayAgent)
+            if (bDisplayingAgent)
             {
-                for (int i = 0; i < displayedAgent.actionHistory.Count; i++)
+                for (var i = 0; i < displayedAgent.actionHistory.Count; ++i)
                 {
                     actionHistoryContent.GetComponent<RectTransform>().sizeDelta = new Vector2(155, historyElements.Count * 15 + 15);
                     GameObject tmpHistory = Instantiate(historyElement, new Vector3(actionHistoryContent.transform.position.x, 

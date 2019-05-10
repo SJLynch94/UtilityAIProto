@@ -8,9 +8,9 @@ public class HealthComponent : MonoBehaviour
     EHealthState mHealthState = EHealthState.Healthy;
     protected int mHealth = 100;
     protected int mMaxHealth = 100;
+    protected int mMinHealth = 0;
 
     AILogic mAgent;
-    protected int mMinHealth = 0;
 
     public EHealthState HealthState
     {
@@ -52,17 +52,22 @@ public class HealthComponent : MonoBehaviour
             }
             if (Health <= 0)
             {
-                HealthState = EHealthState.Dead;
-                mAgent.bHasHealth.Value = false;
-                Destroy(gameObject);
+                StartCoroutine(Die());
             }
         }
         else if (Health <= 0)
         {
-            HealthState = EHealthState.Dead;
-            mAgent.bHasHealth.Value = false;
-            Destroy(gameObject);
+            StartCoroutine(Die());
         }
+    }
+
+    IEnumerator Die()
+    {
+        HealthState = EHealthState.Dead;
+        mAgent.bHasHealth.Value = false;
+        GetComponent<Animator>().SetBool("IsDead", true);
+        yield return new WaitForSeconds(3.0f);
+        Destroy(gameObject);
     }
 
     void Awake()

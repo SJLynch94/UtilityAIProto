@@ -45,7 +45,12 @@ public class AILogic : MonoBehaviour
     [SerializeField]
     Animator mAnim;
     [SerializeField]
-    int mWhatAmIDoing = 0;
+    public int mWhatAmIDoing = 0;
+
+    public enum EAnimatorValue
+    {
+        Idle, Moving, Firing, Reloading,
+    };
 
     // Use this for initialization
     void Start()
@@ -91,7 +96,7 @@ public class AILogic : MonoBehaviour
         mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
         mAnim = GetComponent<Animator>();
         mPreDestination = transform.position;
-        mAnim.SetInteger("WhatAmIDoing", mWhatAmIDoing);
+        mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
 
         foreach(var e in FindObjectsOfType<AILogic>())
         {
@@ -140,29 +145,32 @@ public class AILogic : MonoBehaviour
             //        }
             //    }
             //}
-            for (var i = 0; i < mEnemies.Count; ++i)
+            if(mEnemies.Count > 0)
             {
-                if (mEnemies.Values[i].gameObject)
+                for (var i = 0; i < mEnemies.Count; ++i)
                 {
-                    if (mEnemies.Values[i].GetComponent<AILogic>())
+                    if (mEnemies.Values[i].gameObject)
                     {
-                        float currentMag = (mEnemies.Values[i].transform.position - transform.position).magnitude;
-                        GameObject AI = mEnemies.Values[i].gameObject;
-                        if (Vector3.Distance(mEnemies.Values[i].transform.position, transform.position) <= mMaxDistance)
+                        if (mEnemies.Values[i].GetComponent<AILogic>())
                         {
-                            bIsEnemyInDist.Value = true;
-                            if (currentMag < mEnemies.Keys[i])
+                            float currentMag = (mEnemies.Values[i].transform.position - transform.position).magnitude;
+                            GameObject AI = mEnemies.Values[i].gameObject;
+                            if (Vector3.Distance(mEnemies.Values[i].transform.position, transform.position) <= mMaxDistance)
                             {
-                                mEnemies.Remove(mEnemies.Keys[i]);
-                                mEnemies.Add(currentMag, AI);
+                                bIsEnemyInDist.Value = true;
+                                if (currentMag < mEnemies.Keys[i])
+                                {
+                                    mEnemies.Remove(mEnemies.Keys[i]);
+                                    mEnemies.Add(currentMag, AI);
+                                }
                             }
                         }
                     }
                 }
+                mCurrentTarget = mEnemies.Values[0];
+                bHasEnemy.Value = true;
+                mDestination = mCurrentTarget.transform.position;
             }
-            mCurrentTarget = mEnemies.Values[0];
-            bHasEnemy.Value = true;
-            mDestination = mCurrentTarget.transform.position;
         }
     }
 
@@ -181,6 +189,8 @@ public class AILogic : MonoBehaviour
                 mAttackEnemy.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
                 mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
             }
+
+
         }
     }
 
@@ -196,7 +206,8 @@ public class AILogic : MonoBehaviour
                     mPreDestination = transform.position;
                     mWhatAmIDoing = 1;
                     mAnim.SetInteger("WhatAmIDoing", mWhatAmIDoing);
-                    mNavAgent.SetDestination(mCurrentTarget.transform.position);
+                    mNavAgent.Warp(mCurrentTarget.transform.position);
+                    //mNavAgent.SetDestination(mCurrentTarget.transform.position);
                     mDestination = mCurrentTarget.transform.position;
                 }
                 DetermineWhatToDo();
@@ -208,9 +219,10 @@ public class AILogic : MonoBehaviour
         {
             if (mCurrentTarget)
             {
-                mNavAgent.SetDestination(mCurrentTarget.transform.position);
+                mNavAgent.Warp(mCurrentTarget.transform.position);
+                //mNavAgent.SetDestination(mCurrentTarget.transform.position);
                 Vector3 x = (mCurrentTarget.transform.position - transform.position).normalized;
-                mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
+                //mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
             }
             else
             {
@@ -230,24 +242,28 @@ public class AILogic : MonoBehaviour
             return;
         }
 
-        for (var i = 0; i < mAmmoBoxes.Count; ++i)
+        if (mAmmoBoxes.Count > 0)
         {
-            if (mAmmoBoxes.Values[i].gameObject && mAmmoBoxes.Values[i].GetComponent<AmmoBox>())
+            for (var i = 0; i < mAmmoBoxes.Count; ++i)
             {
-                float currentMag = (mAmmoBoxes.Values[i].transform.position - transform.position).magnitude;
-                AmmoBox ammobox = mAmmoBoxes.Values[i];
-                if (Vector3.Distance(mAmmoBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
+                if (mAmmoBoxes.Values[i].gameObject && mAmmoBoxes.Values[i].GetComponent<AmmoBox>())
                 {
-                    if (currentMag < mAmmoBoxes.Keys[i])
+                    float currentMag = (mAmmoBoxes.Values[i].transform.position - transform.position).magnitude;
+                    AmmoBox ammobox = mAmmoBoxes.Values[i];
+                    if (Vector3.Distance(mAmmoBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
                     {
-                        mAmmoBoxes.Remove(mAmmoBoxes.Keys[i]);
-                        mAmmoBoxes.Add(currentMag, ammobox);
+                        if (currentMag < mAmmoBoxes.Keys[i])
+                        {
+                            mAmmoBoxes.Remove(mAmmoBoxes.Keys[i]);
+                            mAmmoBoxes.Add(currentMag, ammobox);
+                        }
                     }
                 }
             }
         }
         mAmmoBoxes.TrimExcess();
-        mNavAgent.SetDestination(mAmmoBoxes.Values[0].transform.position);
+        mNavAgent.Warp(mAmmoBoxes.Values[0].transform.position);
+        //mNavAgent.SetDestination(mAmmoBoxes.Values[0].transform.position);
         mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
     }
 
@@ -260,24 +276,28 @@ public class AILogic : MonoBehaviour
             mHealth.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
         }
 
-        for (var i = 0; i < mMedBoxes.Count; ++i)
+        if (mMedBoxes.Count > 0)
         {
-            if (mMedBoxes.Values[i].gameObject && mMedBoxes.Values[i].GetComponent<MedBox>())
+            for (var i = 0; i < mMedBoxes.Count; ++i)
             {
-                float currentMag = (mMedBoxes.Values[i].transform.position - transform.position).magnitude;
-                MedBox medbox = mMedBoxes.Values[i];
-                if (Vector3.Distance(mMedBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
+                if (mMedBoxes.Values[i].gameObject && mMedBoxes.Values[i].GetComponent<MedBox>())
                 {
-                    if (currentMag < mAmmoBoxes.Keys[i])
+                    float currentMag = (mMedBoxes.Values[i].transform.position - transform.position).magnitude;
+                    MedBox medbox = mMedBoxes.Values[i];
+                    if (Vector3.Distance(mMedBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
                     {
-                        mMedBoxes.Remove(mMedBoxes.Keys[i]);
-                        mMedBoxes.Add(currentMag, medbox);
+                        if (currentMag < mAmmoBoxes.Keys[i])
+                        {
+                            mMedBoxes.Remove(mMedBoxes.Keys[i]);
+                            mMedBoxes.Add(currentMag, medbox);
+                        }
                     }
                 }
             }
         }
         mMedBoxes.TrimExcess();
-        mNavAgent.SetDestination(mMedBoxes.Values[0].transform.position);
+        mNavAgent.Warp(mMedBoxes.Values[0].transform.position);
+        //mNavAgent.SetDestination(mMedBoxes.Values[0].transform.position);
         mHealth.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
     }
 

@@ -39,7 +39,7 @@ namespace UtilityAIProto
         public void SetPropertyUI()
         {
             float propertyVal = Property.NormalizedVal;
-            propertyText.text = "Property: " + propertyVal.ToString("0.00");
+            propertyText.text = "P: " + propertyVal.ToString("0.00");
             propertySlider.value = propertyVal;
         }
 

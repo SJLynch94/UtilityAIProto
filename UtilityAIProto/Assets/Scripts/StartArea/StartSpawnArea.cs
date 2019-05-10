@@ -26,10 +26,10 @@ public class StartSpawnArea : MonoBehaviour {
 
     public void Start()
     {
-        for(int i = 0; i < AIAmount; i++)
-        {
-            spawnPosition = GetSpawnPosition();
-            Instantiate(AI, spawnPosition, Quaternion.identity);
-        }
+        //for(int i = 0; i < AIAmount; i++)
+        //{
+        //    spawnPosition = GetSpawnPosition();
+        //    Instantiate(AI, spawnPosition, Quaternion.identity);
+        //}
     }
 }

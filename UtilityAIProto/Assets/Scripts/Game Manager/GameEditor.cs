@@ -29,6 +29,14 @@ public class GameEditor : Editor
             EditorUtility.SetDirty(this);
         }
 
+        if (GUILayout.Button("Spawn AI"))
+        {
+            myScript.SpawnAI();
+            List<AILogic> AI = new List<AILogic>(FindObjectsOfType<AILogic>());
+            foreach (var w in AI) EditorUtility.SetDirty(w);
+            EditorUtility.SetDirty(this);
+        }
+
         if (GUILayout.Button("Clear Ammo Boxes"))
         {
             myScript.ClearAmmoBoxes();
@@ -42,6 +50,14 @@ public class GameEditor : Editor
             myScript.ClearMedBoxes();
             List<MedBox> med = new List<MedBox>(FindObjectsOfType<MedBox>());
             foreach (var w in med) EditorUtility.SetDirty(w);
+            EditorUtility.SetDirty(this);
+        }
+
+        if (GUILayout.Button("Clear AI"))
+        {
+            myScript.ClearAI();
+            List<AILogic> AI = new List<AILogic>(FindObjectsOfType<AILogic>());
+            foreach (var w in AI) EditorUtility.SetDirty(w);
             EditorUtility.SetDirty(this);
         }
     }

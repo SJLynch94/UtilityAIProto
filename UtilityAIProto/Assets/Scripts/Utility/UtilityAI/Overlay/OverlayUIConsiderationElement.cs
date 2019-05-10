@@ -47,7 +47,7 @@ namespace UtilityAIProto
         public void SetConsiderationUI()
         {
             float utilityVal = Consideration.UtilityScore;
-            utilityText.text = "UtilityValue: " + utilityVal.ToString("0.00");
+            utilityText.text = "U Val: " + utilityVal.ToString("0.00");
             utilitySlider.value = utilityVal;
         }
 

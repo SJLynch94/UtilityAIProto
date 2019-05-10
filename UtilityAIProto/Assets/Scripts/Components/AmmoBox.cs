@@ -9,6 +9,7 @@ public class AmmoBox : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        GetComponent<Animator>().SetBool("IsUsing", true);
         GunLogic gl = other.GetComponentInChildren<GunLogic>();
         if (gl)
         {

@@ -9,14 +9,12 @@ public class MedBox : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        GetComponent<Animator>().SetBool("IsUsing", true);
         HealthComponent healing = other.GetComponentInChildren<HealthComponent>();
-        if (healing.gameObject.tag == "AI")
+        if (healing)
         {
-            if (healing)
-            {
-                healing.AddHealth(mHealAmount);
-                Destroy(gameObject);
-            }
+            healing.AddHealth(mHealAmount);
+            Destroy(gameObject);
         }
     }
 }
