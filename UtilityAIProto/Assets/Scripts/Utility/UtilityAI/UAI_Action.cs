@@ -26,6 +26,11 @@ namespace UtilityAIProto
             set { actionScore = value; }
         }
 
+        public int PriorityLevel
+        {
+            get { return priorityLvl; }
+        }
+
         public void EnableConsideration(string propertyName)
         {
             for(var i = 0; i < considerations.Count; ++i)

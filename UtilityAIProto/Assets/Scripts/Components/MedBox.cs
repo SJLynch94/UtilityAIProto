@@ -10,11 +10,22 @@ public class MedBox : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         GetComponent<Animator>().SetBool("IsUsing", true);
-        HealthComponent healing = other.GetComponentInChildren<HealthComponent>();
+        HealthComponent healing = other.GetComponent<HealthComponent>();
         if (healing)
         {
-            healing.AddHealth(mHealAmount);
-            Destroy(gameObject);
+            StartCoroutine(Destroy(healing));
         }
+        else
+        {
+            GetComponent<Animator>().SetBool("IsUsing", false);
+        }
+    }
+
+    IEnumerator Destroy(HealthComponent healing)
+    {
+        healing.AddHealth(mHealAmount);
+        //healing.GetComponent<AILogic>().mMedBoxes.Remove(this);
+        yield return new WaitForSeconds(3.0f);
+        Destroy(gameObject);
     }
 }

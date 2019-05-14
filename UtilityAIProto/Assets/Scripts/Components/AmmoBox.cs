@@ -10,11 +10,28 @@ public class AmmoBox : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         GetComponent<Animator>().SetBool("IsUsing", true);
-        GunLogic gl = other.GetComponentInChildren<GunLogic>();
+        RW_Trace gl = other.GetComponentInChildren<RW_Trace>();
         if (gl)
         {
-            gl.AddAmmo(mAmmoAmount);
+            StartCoroutine(Destroy(gl));
+        }
+        else
+        {
+            GetComponent<Animator>().SetBool("IsUsing", false);
+        }
+    }
+
+    IEnumerator Destroy(RW_Trace gl)
+    {
+        if (gl.AddAmmo(mAmmoAmount))
+        {
+            //gl.GetComponent<AILogic>().mAmmoBoxes.Remove(this.GetComponent<AmmoBox>());
+            yield return new WaitForSeconds(3.0f);
             Destroy(gameObject);
+        }
+        else
+        {
+            yield break;
         }
     }
 }

@@ -7,12 +7,15 @@ namespace UtilityAIProto
 {
     public class OverlayUIAgentElement : MonoBehaviour
     {
+        public Camera mAgentCam;
+        public Camera mMainCamera;
         private UAI_Agent agent;
         public Text text;
         private OverlayUI UI;
         private bool bSelected = false;
         private ColorBlock normalColourBlock, selectedColourBlock, pauseNormalColourBlock, pauseSeletedColourBlock;
         public Button button, pauseButton;
+        Vector3 campos;
 
         public UAI_Agent Agent
         {
@@ -31,6 +34,8 @@ namespace UtilityAIProto
             pauseNormalColourBlock = pauseButton.colors;
             pauseSeletedColourBlock = pauseButton.colors;
             pauseSeletedColourBlock.normalColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+            mMainCamera = Camera.main;
+            mAgentCam = Agent.GetComponentInChildren<Camera>();
         }
 
         public void SetAgent(UAI_Agent a)
@@ -47,6 +52,8 @@ namespace UtilityAIProto
                 bSelected = true;
                 Agent.AIIndicator.SetActive(true);
                 GetComponent<Button>().colors = selectedColourBlock;
+                mMainCamera.enabled = true;
+                mAgentCam.enabled = false;
             }
             else
             {
@@ -54,6 +61,8 @@ namespace UtilityAIProto
                 bSelected = false;
                 Agent.AIIndicator.SetActive(false);
                 GetComponent<Button>().colors = normalColourBlock;
+                mMainCamera.enabled = false;
+                mAgentCam.enabled = true;
             }
         }
 

@@ -245,7 +245,7 @@ namespace UtilityAIProto
 
         public bool EvaluateInterruption()
         {
-            int topActionPriority = TopAction.priorityLvl;
+            int topActionPriority = TopAction.PriorityLevel;
             float topActionScore = 0.0f;
             UAI_Action topInterruption = TopAction;
             bool validInterruption = false;

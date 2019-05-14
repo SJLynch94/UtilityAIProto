@@ -25,8 +25,7 @@ public abstract class RangedWeapon : Weapons
         if (mFireRateTimer > 0.0f) mFireRateTimer -= Time.fixedDeltaTime;
         if (mWeaponState == EWeaponState.Reloading)
         {
-            GetComponentInParent<AILogic>().mWhatAmIDoing = 3;
-            GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", GetComponentInParent<AILogic>().mWhatAmIDoing);
+            GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Reloading);
             if ((mReloadTime -= Time.fixedDeltaTime) <= 0.0f)
             {
                 mWeaponState = EWeaponState.Idle;
@@ -44,13 +43,13 @@ public abstract class RangedWeapon : Weapons
                 mFireRateTimer = (1.0f) / (mFireRate);
                 mMagAmmo--;
                 mWeaponState = EWeaponState.Firing;
+                GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Firing);
                 ShootWeapon();
                 mMuzzleFlash.gameObject.SetActive(true);
                 if (mMagAmmo <= 0)
                 {
                     OnReload();
                     mMuzzleFlash.gameObject.SetActive(false);
-
                 }
 
                 if (mWeaponShootClips.Count > 0)
@@ -90,6 +89,7 @@ public abstract class RangedWeapon : Weapons
         {
             mMagAmmo += mAmmo;
             mAmmo = 0;
+            GetComponentInParent<AILogic>().mAmmo.Value += mMaxMagAmmo * UtilityAIProto.UAI_Time.MyTime;
         }
     }
 

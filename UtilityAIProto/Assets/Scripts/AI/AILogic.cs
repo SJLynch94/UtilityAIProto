@@ -8,18 +8,18 @@ public class AILogic : MonoBehaviour
 {
 
     protected Rigidbody mRigidBody;
-    protected Camera mPlayerCamera;
+    protected Camera mCamera;
     [SerializeField] public GameObject mWeaponHolder;
 
-    SortedList<float, GameObject> mEnemies = new SortedList<float, GameObject>();
-    SortedList<float, AmmoBox> mAmmoBoxes = new SortedList<float, AmmoBox>();
-    SortedList<float, MedBox> mMedBoxes = new SortedList<float, MedBox>();
+    public SortedList<float, GameObject> mEnemies = new SortedList<float, GameObject>();
+    public SortedList<float, AmmoBox> mAmmoBoxes = new SortedList<float, AmmoBox>();
+    public SortedList<float, MedBox> mMedBoxes = new SortedList<float, MedBox>();
 
     public GameObject mCurrentTarget;
 
     public float mMovementSpeed;
     public Vector3 mDestination, mPreDestination;
-    public bool bAtDestination;
+    public bool bAtDestination, bMoving;
 
     UtilityAIProto.UAI_Agent mAgent;
     public UtilityAIProto.UAI_PropertyFloat mKill, mZone, mHealth, mAmmo, mAttackEnemy;
@@ -49,7 +49,7 @@ public class AILogic : MonoBehaviour
 
     public enum EAnimatorValue
     {
-        Idle, Moving, Firing, Reloading,
+        Idle, Moving, Firing, Reloading, MovingReload,
     };
 
     // Use this for initialization
@@ -57,7 +57,6 @@ public class AILogic : MonoBehaviour
     {
         mAgent.SetActionDelegate("GetHealth", GetHealth);
         mAgent.SetActionDelegate("GetAmmo", GetAmmo);
-        //mAgent.SetActionDelegate("MoveToArea", MoveToArea);
         mAgent.SetActionDelegate("AttackEnemy", AttackEnemy);
         mAgent.SetActionDelegate("FindEnemy", FindEnemy);
 
@@ -88,6 +87,7 @@ public class AILogic : MonoBehaviour
 
     void Awake()
     {
+        mCamera = GetComponent<Camera>();
         mRigidBody = GetComponent<Rigidbody>();
         mSphereCollider = GetComponent<SphereCollider>();
         mGunLogic = GetComponent<GunLogic>();
@@ -95,14 +95,14 @@ public class AILogic : MonoBehaviour
         mNavAgent = GetComponent<NavMeshAgent>();
         mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
         mAnim = GetComponent<Animator>();
-        mPreDestination = transform.position;
+        mPreDestination = mRigidBody.transform.position;
         mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
 
-        foreach(var e in FindObjectsOfType<AILogic>())
+        foreach (var e in FindObjectsOfType<AILogic>())
         {
             if (e)
             {
-                if(e == this) { continue; }
+                if (e == this) { continue; }
                 float mag = (e.transform.position - mRigidBody.transform.position).magnitude;
                 mEnemies.Add(mag, e.gameObject);
             }
@@ -131,79 +131,38 @@ public class AILogic : MonoBehaviour
     private void FindEnemy()
     {
         ResetUAI();
-        if (!mCurrentTarget)
+
+        if (bAtDestination)
         {
-            //foreach(var e in mEnemies)
-            //{
-            //    if(e)
-            //    {
-            //        if (Vector3.Distance(e.transform.position, transform.position) <= mMaxDistance)
-            //        {
-            //            mCurrentTarget = e;
-            //            bHasEnemy.Value = true;
-            //            mDestination = mCurrentTarget.transform.position;
-            //        }
-            //    }
-            //}
-            if(mEnemies.Count > 0)
+            if(!mCurrentTarget)
             {
-                for (var i = 0; i < mEnemies.Count; ++i)
-                {
-                    if (mEnemies.Values[i].gameObject)
-                    {
-                        if (mEnemies.Values[i].GetComponent<AILogic>())
-                        {
-                            float currentMag = (mEnemies.Values[i].transform.position - transform.position).magnitude;
-                            GameObject AI = mEnemies.Values[i].gameObject;
-                            if (Vector3.Distance(mEnemies.Values[i].transform.position, transform.position) <= mMaxDistance)
-                            {
-                                bIsEnemyInDist.Value = true;
-                                if (currentMag < mEnemies.Keys[i])
-                                {
-                                    mEnemies.Remove(mEnemies.Keys[i]);
-                                    mEnemies.Add(currentMag, AI);
-                                }
-                            }
-                        }
-                    }
-                }
-                mCurrentTarget = mEnemies.Values[0];
-                bHasEnemy.Value = true;
-                mDestination = mCurrentTarget.transform.position;
+                bHasEnemy.Value = false;
+                bIsEnemyInDist.Value = false;
+                bIsEnemyInAttackDist.Value = false;
+                mKill.Value -= 40.0f * UtilityAIProto.UAI_Time.MyTime;
             }
+        }
+        else
+        {
+            MoveToDestination();
         }
     }
 
     private void AttackEnemy()
     {
         ResetUAI();
-        if (mCurrentTarget)
-        {
-            if (Vector3.Distance(mCurrentTarget.transform.position, transform.position) <= mAttackDist)
-            {
-                bIsEnemyInDist.Value = true;
-                // Need to do a raycast to target to then set bCanSeeEnemy to true
-
-                mWhatAmIDoing = 2;
-                mAnim.SetInteger("WhatAmIDoing", mWhatAmIDoing);
-                mAttackEnemy.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
-                mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
-            }
-
-
-        }
+        
     }
 
     private void MoveToArea()
     {
-        //float step = mMovementSpeed * UtilityAILynch.UAI_Time.MyTime;
         if (mNavAgent.hasPath)
         {
             if (mNavAgent.isPathStale)
             {
                 if (mCurrentTarget)
                 {
-                    mPreDestination = transform.position;
+                    mPreDestination = mRigidBody.transform.position;
                     mWhatAmIDoing = 1;
                     mAnim.SetInteger("WhatAmIDoing", mWhatAmIDoing);
                     mNavAgent.Warp(mCurrentTarget.transform.position);
@@ -212,7 +171,7 @@ public class AILogic : MonoBehaviour
                 }
                 DetermineWhatToDo();
             }
-            Vector3 x = (mCurrentTarget.transform.position - transform.position).normalized;
+            Vector3 x = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized;
             mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
         }
         else
@@ -221,7 +180,7 @@ public class AILogic : MonoBehaviour
             {
                 mNavAgent.Warp(mCurrentTarget.transform.position);
                 //mNavAgent.SetDestination(mCurrentTarget.transform.position);
-                Vector3 x = (mCurrentTarget.transform.position - transform.position).normalized;
+                Vector3 x = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized;
                 //mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
             }
             else
@@ -231,79 +190,87 @@ public class AILogic : MonoBehaviour
         }
     }
 
-    private void GetAmmo()
+    void MoveToDestination()
     {
-        ResetUAI();
-
-        if (mAmmoBoxes.Count <= 0)
+        if(mCurrentTarget)
         {
-            mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
-            //mAgent;
-            return;
-        }
-
-        if (mAmmoBoxes.Count > 0)
-        {
-            for (var i = 0; i < mAmmoBoxes.Count; ++i)
+            if(mNavAgent.hasPath)
             {
-                if (mAmmoBoxes.Values[i].gameObject && mAmmoBoxes.Values[i].GetComponent<AmmoBox>())
+                if(mNavAgent.isPathStale)
                 {
-                    float currentMag = (mAmmoBoxes.Values[i].transform.position - transform.position).magnitude;
-                    AmmoBox ammobox = mAmmoBoxes.Values[i];
-                    if (Vector3.Distance(mAmmoBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
+                    if(mCurrentTarget)
                     {
-                        if (currentMag < mAmmoBoxes.Keys[i])
-                        {
-                            mAmmoBoxes.Remove(mAmmoBoxes.Keys[i]);
-                            mAmmoBoxes.Add(currentMag, ammobox);
-                        }
+                        mDestination = mCurrentTarget.transform.position;
+                        mPreDestination = mRigidBody.transform.position;
+                        mNavAgent.SetDestination(mDestination);
+                        mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+                        mAnim.SetBool("IsMoving", mNavAgent.isStopped);
+                    }
+                    else
+                    {
+                        DetermineWhatToDo();
                     }
                 }
             }
         }
+        else
+        {
+
+        }
+    }
+
+    private void GetAmmo()
+    {
+        ResetUAI();
+
+        //if (mAmmoBoxes.Count <= 0)
+        //{
+        //    mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
+        //    return;
+        //}
+
+
+        bAtDestination = false;
         mAmmoBoxes.TrimExcess();
-        mNavAgent.Warp(mAmmoBoxes.Values[0].transform.position);
+        mNavAgent.SetDestination(mDestination);
+        //mNavAgent.Warp(mDestination);
         //mNavAgent.SetDestination(mAmmoBoxes.Values[0].transform.position);
-        mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
+        //mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
     }
 
     private void GetHealth()
     {
         ResetUAI();
 
-        if (mMedBoxes.Count <= 0)
+        if (bAtDestination)
         {
-            mHealth.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
+            mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
         }
-
-        if (mMedBoxes.Count > 0)
+        else
         {
-            for (var i = 0; i < mMedBoxes.Count; ++i)
-            {
-                if (mMedBoxes.Values[i].gameObject && mMedBoxes.Values[i].GetComponent<MedBox>())
-                {
-                    float currentMag = (mMedBoxes.Values[i].transform.position - transform.position).magnitude;
-                    MedBox medbox = mMedBoxes.Values[i];
-                    if (Vector3.Distance(mMedBoxes.Values[i].transform.position, transform.position) <= mMaxDistance)
-                    {
-                        if (currentMag < mAmmoBoxes.Keys[i])
-                        {
-                            mMedBoxes.Remove(mMedBoxes.Keys[i]);
-                            mMedBoxes.Add(currentMag, medbox);
-                        }
-                    }
-                }
-            }
+            mNavAgent.SetDestination(mDestination);
         }
-        mMedBoxes.TrimExcess();
-        mNavAgent.Warp(mMedBoxes.Values[0].transform.position);
-        //mNavAgent.SetDestination(mMedBoxes.Values[0].transform.position);
-        mHealth.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!bAtDestination)
+        {
+            mNavAgent.SetDestination(mDestination);
+            mAgent.UpdateUAI();
+        }
+
+        if (mRigidBody.transform.position == mDestination ||
+            mRigidBody.transform.position.x - 1 <= mDestination.x ||
+            mRigidBody.transform.position.x + 1 >= mDestination.x)
+        {
+            if (mRigidBody.transform.position.z - 1 <= mDestination.z ||
+                mRigidBody.transform.position.z + 1 >= mDestination.z)
+            {
+                bAtDestination = true;
+            }
+        }
         mAgent.UpdateUAI();
     }
 
@@ -313,8 +280,12 @@ public class AILogic : MonoBehaviour
 
         if (other.GetComponent<AILogic>())
         {
+            bIsEnemyInDist.Value = true;
+            bIsEnemyInAttackDist.Value = true;
+            bHasEnemy.Value = true;
+            mCurrentTarget = other.gameObject;
             var rott = Quaternion.LookRotation(other.transform.position - mRigidBody.transform.position);
-            mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: Time.fixedDeltaTime * mRotateSpeed));
+            mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
             float mag = (mRigidBody.transform.position - other.transform.position).magnitude;
             Ray ray = new Ray
             {
@@ -329,7 +300,11 @@ public class AILogic : MonoBehaviour
                 {
                     if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
                     {
+                        bCanSeeEnemy.Value = true;
+                        mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
+                        mRWTrace.OnShoot();
                         Debug.Log("Target: " + other.name + " is close to the " + transform.name + " and is in front of " + transform.name);
+
                     }
                 }
             }
@@ -349,23 +324,195 @@ public class AILogic : MonoBehaviour
     {
         if (mAgent.TopAction.handle == GetHealth)
         {
-
+            if (mMedBoxes.Count > 0)
+            {
+                for (var i = 0; i < mMedBoxes.Count; ++i)
+                {
+                    if (mMedBoxes.Values[i] != null)
+                    {
+                        if (mMedBoxes.Values[i].gameObject && mMedBoxes.Values[i].GetComponent<MedBox>())
+                        {
+                            float currentMag = (mMedBoxes.Values[i].transform.position - mRigidBody.transform.position).magnitude;
+                            MedBox medbox = mMedBoxes.Values[i];
+                            if (Vector3.Distance(mMedBoxes.Values[i].transform.position, mRigidBody.transform.position) <= mMaxDistance)
+                            {
+                                if (currentMag < mAmmoBoxes.Keys[i])
+                                {
+                                    mMedBoxes.Remove(mMedBoxes.Keys[i]);
+                                    mMedBoxes.Add(currentMag, medbox);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        mMedBoxes.RemoveAt(i);
+                    }
+                }
+            }
+            mPreDestination = mRigidBody.transform.position;
+            mDestination = mMedBoxes.Values[0].transform.position;
         }
         if (mAgent.TopAction.handle == GetAmmo)
         {
-
-        }
-        if (mAgent.TopAction.handle == MoveToArea)
-        {
-
+            if (mAmmoBoxes.Count > 0)
+            {
+                for (var i = 0; i < mAmmoBoxes.Count; ++i)
+                {
+                    if (mAmmoBoxes.Values[i] != null)
+                    {
+                        if (mAmmoBoxes.Values[i].gameObject && mAmmoBoxes.Values[i].GetComponent<AmmoBox>())
+                        {
+                            float currentMag = (mAmmoBoxes.Values[i].transform.position - mRigidBody.transform.position).magnitude;
+                            AmmoBox ammobox = mAmmoBoxes.Values[i];
+                            if (Vector3.Distance(mAmmoBoxes.Values[i].transform.position, mRigidBody.transform.position) <= mMaxDistance)
+                            {
+                                if (currentMag < mAmmoBoxes.Keys[i])
+                                {
+                                    mAmmoBoxes.Remove(mAmmoBoxes.Keys[i]);
+                                    mAmmoBoxes.Add(currentMag, ammobox);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        mAmmoBoxes.RemoveAt(i);
+                    }
+                }
+            }
+            mPreDestination = mRigidBody.transform.position;
+            mDestination = mAmmoBoxes.Values[0].transform.position;
         }
         if (mAgent.TopAction.handle == AttackEnemy)
         {
+            if (mCurrentTarget)
+            {
+                bHasEnemy.Value = true;
+                var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);
+                mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
+                if (Vector3.Distance(mCurrentTarget.transform.position, mRigidBody.transform.position) <= mAttackDist)
+                {
+                    bIsEnemyInDist.Value = true;
+                    bIsEnemyInAttackDist.Value = true;
+                    // Need to do a raycast to target to then set bCanSeeEnemy to true
 
+                    float mag = (mRigidBody.transform.position - mCurrentTarget.transform.position).magnitude;
+                    Ray ray = new Ray
+                    {
+                        origin = mRigidBody.transform.position,
+                        direction = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized
+                    };
+
+                    RaycastHit hit = new RaycastHit();
+                    if ((Vector3.Angle(ray.direction, mRigidBody.transform.forward)) < mFOVHalf * 2)
+                    {
+                        if (Physics.Raycast(ray.origin + Vector3.up * mHeightMul, ray.direction, out hit, mag))
+                        {
+                            if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
+                            {
+                                bCanSeeEnemy.Value = true;
+                                Debug.Log("Target: " + mCurrentTarget.name + " is close to the " + transform.name + " and is in front of " + transform.name);
+                                mRWTrace.OnShoot();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
         }
         if (mAgent.TopAction.handle == FindEnemy)
         {
+            if (!mCurrentTarget)
+            {
+                if (mEnemies.Count > 0)
+                {
+                    for (var i = 0; i < mEnemies.Count; ++i)
+                    {
+                        if (mEnemies.Values[i].gameObject != null)
+                        {
+                            if (mEnemies.Values[i].GetComponent<AILogic>())
+                            {
+                                float currentMag = (mEnemies.Values[i].transform.position - mRigidBody.transform.position).magnitude;
+                                GameObject AI = mEnemies.Values[i].gameObject;
+                                if (Vector3.Distance(mEnemies.Values[i].transform.position, mRigidBody.transform.position) <= mMaxDistance)
+                                {
+                                    bIsEnemyInDist.Value = true;
+                                    if (currentMag < mEnemies.Keys[i])
+                                    {
+                                        mEnemies.Remove(mEnemies.Keys[i]);
+                                        mEnemies.Add(currentMag, AI);
+                                    }
+                                    if (Vector3.Distance(mEnemies.Values[i].transform.position, mRigidBody.transform.position) <= mAttackDist)
+                                    {
+                                        bIsEnemyInAttackDist.Value = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    mCurrentTarget = mEnemies.Values[0];
+                    bHasEnemy.Value = true;
+                    mPreDestination = mRigidBody.transform.position;
+                    mDestination = mCurrentTarget.transform.position;
+                }
+            }
+            else
+            {
+                bHasEnemy.Value = true;
+                mPreDestination = mRigidBody.transform.position;
+                mDestination = mCurrentTarget.transform.position;
+            }
+        }
+    }
 
+
+    void Fire()
+    {
+        if (mCurrentTarget)
+        {
+            if (mCurrentTarget.GetComponent<AILogic>())
+            {
+                Vector3 pos = mCurrentTarget.transform.position;
+                pos.y = mRigidBody.transform.position.y;
+                var rott = Quaternion.LookRotation(pos - mRigidBody.transform.position);
+                mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
+
+                Ray ray = new Ray
+                {
+                    origin = mRigidBody.transform.position,
+                    direction = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized
+                };
+                if ((Vector3.Angle(ray.direction, mRigidBody.transform.forward)) < mFOVHalf * 2)
+                {
+                    Debug.Log("Target: " + mCurrentTarget.name + " is close to the " + transform.name + " and is in front of " + transform.name);
+
+                    if (Vector3.Distance(ray.origin, mCurrentTarget.transform.position) <= mAttackDist)
+                    {
+                        bIsEnemyInAttackDist.Value = true;
+                        mRWTrace.OnShoot();
+                        // Play Attack Amimation
+                        //mAnimCon.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Firing);
+                        Debug.Log(gameObject.name + " has Attacked " + mCurrentTarget.name);
+                    }
+                    else
+                    {
+                        bIsEnemyInAttackDist.Value = false;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

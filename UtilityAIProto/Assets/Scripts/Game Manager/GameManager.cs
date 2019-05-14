@@ -13,9 +13,9 @@ public class GameManager : MonoBehaviour {
     public float mAIAmount;
     public GameObject AI;
 
-    List<AILogic> mAIList;
-    List<AmmoBox> mAmmoList;
-    List<MedBox> mMedList;
+    List<AILogic> mAIList = new List<AILogic>();
+    List<AmmoBox> mAmmoList = new List<AmmoBox>();
+    List<MedBox> mMedList = new List<MedBox>();
 
     float mTerrainWidth;
     float mTerrainLength;
