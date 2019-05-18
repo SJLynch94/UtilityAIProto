@@ -9,6 +9,7 @@ public class AILogic : MonoBehaviour
 
     protected Rigidbody mRigidBody;
     protected Camera mCamera;
+    Transform mCameraPos;
     [SerializeField] public GameObject mWeaponHolder;
 
     public SortedList<float, GameObject> mEnemies = new SortedList<float, GameObject>();
@@ -52,6 +53,11 @@ public class AILogic : MonoBehaviour
         Idle, Moving, Firing, Reloading, MovingReload,
     };
 
+    public Transform CameraTransform
+    {
+        get { return mCameraPos; }
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -87,6 +93,8 @@ public class AILogic : MonoBehaviour
 
     void Awake()
     {
+        mCameraPos = GameObject.FindGameObjectWithTag("CameraPos").transform;
+        mCameraPos = GameObject.Find("CameraPos").transform;
         mCamera = GetComponent<Camera>();
         mRigidBody = GetComponent<Rigidbody>();
         mSphereCollider = GetComponent<SphereCollider>();
@@ -102,7 +110,7 @@ public class AILogic : MonoBehaviour
         {
             if (e)
             {
-                if (e == this) { continue; }
+                if (e == this) { mCameraPos = e.GetComponentInChildren<FindCameraPos>().transform; continue; }
                 float mag = (e.transform.position - mRigidBody.transform.position).magnitude;
                 mEnemies.Add(mag, e.gameObject);
             }
@@ -215,7 +223,7 @@ public class AILogic : MonoBehaviour
         }
         else
         {
-
+            DetermineWhatToDo();
         }
     }
 
@@ -394,7 +402,7 @@ public class AILogic : MonoBehaviour
         }
         if (mAgent.TopAction.handle == AttackEnemy)
         {
-            if (mCurrentTarget)
+            if (mCurrentTarget && mCurrentTarget.GetComponent<AILogic>())
             {
                 bHasEnemy.Value = true;
                 var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);

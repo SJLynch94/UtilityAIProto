@@ -52,8 +52,8 @@ namespace UtilityAIProto
                 bSelected = true;
                 Agent.AIIndicator.SetActive(true);
                 GetComponent<Button>().colors = selectedColourBlock;
-                mMainCamera.enabled = true;
-                mAgentCam.enabled = false;
+                //mMainCamera.enabled = true;
+                //mAgentCam.enabled = false;
             }
             else
             {
@@ -61,8 +61,8 @@ namespace UtilityAIProto
                 bSelected = false;
                 Agent.AIIndicator.SetActive(false);
                 GetComponent<Button>().colors = normalColourBlock;
-                mMainCamera.enabled = false;
-                mAgentCam.enabled = true;
+                //mMainCamera.enabled = false;
+                //mAgentCam.enabled = true;
             }
         }
 

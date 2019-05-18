@@ -41,12 +41,16 @@ public abstract class Weapons : MonoBehaviour
         {
             mAmmo += ammo;
             if (mAmmo > mMaxAmmo) mAmmo = mMaxAmmo;
+            GetComponentInParent<AILogic>().mAmmo.Value += ammo * UtilityAIProto.UAI_Time.MyTime;
             return true;
         }
         return false;
     }
 
-    public int GetMaxAmmo() { return mMaxAmmo; }
+    public int GetMaxAmmo
+    {
+        get { return mMaxAmmo; }
+    }
 
     private void Start()
     {

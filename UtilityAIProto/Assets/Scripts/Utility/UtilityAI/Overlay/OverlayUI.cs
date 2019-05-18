@@ -17,6 +17,11 @@ namespace UtilityAIProto
         private bool bDisplayingAgent = false;
         private bool bDisplayActionCurve = false;
 
+        public UAI_Agent DisplayedAgent
+        {
+            get { return displayedAgent; }
+        }
+
         public GameObject ModifiablePropertyElement, PropertyElement, considerationElement, actionElement, agentElement, historyElement,
                       propertyContent, considerationContent, actionContent, agentContent, actionHistoryContent, actionConsiderationContent,
                       actionsPanel, propertiesPanel, eventsPanel, propertyConsiderationsPanel, agentsPanel, utilityCurve, actionConsiderationCurve,

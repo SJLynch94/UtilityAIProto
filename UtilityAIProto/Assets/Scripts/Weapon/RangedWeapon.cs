@@ -22,11 +22,11 @@ public abstract class RangedWeapon : Weapons
 
     private void FixedUpdate()
     {
-        if (mFireRateTimer > 0.0f) mFireRateTimer -= Time.fixedDeltaTime;
+        if (mFireRateTimer > 0.0f) mFireRateTimer -= UtilityAIProto.UAI_Time.MyTime;
         if (mWeaponState == EWeaponState.Reloading)
         {
             GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Reloading);
-            if ((mReloadTime -= Time.fixedDeltaTime) <= 0.0f)
+            if ((mReloadTime -= UtilityAIProto.UAI_Time.MyTime) <= 0.0f)
             {
                 mWeaponState = EWeaponState.Idle;
                 FinishReload();
@@ -90,6 +90,7 @@ public abstract class RangedWeapon : Weapons
             mMagAmmo += mAmmo;
             mAmmo = 0;
             GetComponentInParent<AILogic>().mAmmo.Value += mMaxMagAmmo * UtilityAIProto.UAI_Time.MyTime;
+            GetComponentInParent<AILogic>().bHasAmmo.Value = false;
         }
     }
 

@@ -35,7 +35,7 @@ public class RW_Trace : RangedWeapon
                 hit.collider.gameObject.transform.root.GetComponent<HealthComponent>().Damage((short)mWeaponDamage);
             }
             // If bullet hits something that isn't a character, leave a bullet impact
-            else if (hit.collider.gameObject != transform.root.gameObject && !hit.collider.gameObject.transform.root.GetComponentInChildren<CharacterController>())
+            else if (hit.collider.gameObject != transform.root.gameObject && !hit.collider.gameObject.transform.root.GetComponentInChildren<AILogic>())
             {
 
                 GameObject newImpact = Instantiate(mBulletImpact);
