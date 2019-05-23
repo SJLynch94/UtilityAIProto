@@ -40,6 +40,8 @@ public class AILogic : MonoBehaviour
 
     SphereCollider mSphereCollider;
 
+    HealthComponent mHealthComp;
+
     GunLogic mGunLogic;
     [SerializeField]
     RW_Trace mRWTrace;
@@ -66,39 +68,18 @@ public class AILogic : MonoBehaviour
         mAgent.SetActionDelegate("AttackEnemy", AttackEnemy);
         mAgent.SetActionDelegate("FindEnemy", FindEnemy);
 
-        //foreach (var e in FindObjectsOfType<GameObject>())
-        //{
-        //    if (e)
-        //    {
-        //        if (e == this) { continue; }
-        //        if (e.GetComponent<AILogic>())
-        //        {
-        //            float mag = (e.transform.position - mRigidBody.transform.position).magnitude;
-        //            mEnemies.Add(mag, e.gameObject);
-        //        }
-        //        if (e.GetComponent<MedBox>())
-        //        {
-        //            float mag = (e.transform.position - mRigidBody.transform.position).magnitude;
-        //            mMedBoxes.Add(mag, e.GetComponent<MedBox>());
-        //        }
-        //        if (e.GetComponent<AmmoBox>())
-        //        {
-        //            float mag = (e.transform.position - mRigidBody.transform.position).magnitude;
-        //            mAmmoBoxes.Add(mag, e.GetComponent<AmmoBox>());
-        //        }
-        //    }
-
-        //}
+        mMaxDistance = mRWTrace.Range;
+        mAttackDist = mMaxDistance / 3.0f;
     }
 
     void Awake()
     {
-        mCameraPos = GameObject.FindGameObjectWithTag("CameraPos").transform;
-        mCameraPos = GameObject.Find("CameraPos").transform;
-        mCamera = GetComponent<Camera>();
+        //mCameraPos = GameObject.FindGameObjectWithTag("CameraPos").transform;
+        //mCameraPos = GameObject.Find("CameraPos").transform;
+        //mCamera = GetComponent<Camera>();
         mRigidBody = GetComponent<Rigidbody>();
         mSphereCollider = GetComponent<SphereCollider>();
-        mGunLogic = GetComponent<GunLogic>();
+        mHealthComp = GetComponent<HealthComponent>();
         mRWTrace = GetComponentInChildren<RW_Trace>();
         mNavAgent = GetComponent<NavMeshAgent>();
         mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
@@ -159,42 +140,17 @@ public class AILogic : MonoBehaviour
     private void AttackEnemy()
     {
         ResetUAI();
-        
-    }
 
-    private void MoveToArea()
-    {
-        if (mNavAgent.hasPath)
+        if (bAtDestination)
         {
-            if (mNavAgent.isPathStale)
-            {
-                if (mCurrentTarget)
-                {
-                    mPreDestination = mRigidBody.transform.position;
-                    mWhatAmIDoing = 1;
-                    mAnim.SetInteger("WhatAmIDoing", mWhatAmIDoing);
-                    mNavAgent.Warp(mCurrentTarget.transform.position);
-                    //mNavAgent.SetDestination(mCurrentTarget.transform.position);
-                    mDestination = mCurrentTarget.transform.position;
-                }
-                DetermineWhatToDo();
-            }
-            Vector3 x = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized;
-            mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
+            bHasEnemy.Value = true;
+            bIsEnemyInDist.Value = true;
+            bIsEnemyInAttackDist.Value = true;
+            mKill.Value += 60.0f * UtilityAIProto.UAI_Time.MyTime;
         }
         else
         {
-            if (mCurrentTarget)
-            {
-                mNavAgent.Warp(mCurrentTarget.transform.position);
-                //mNavAgent.SetDestination(mCurrentTarget.transform.position);
-                Vector3 x = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized;
-                //mNavAgent.Move(x * UtilityAIProto.UAI_Time.MyTime);
-            }
-            else
-            {
-
-            }
+            MoveToDestination();
         }
     }
 
@@ -212,13 +168,17 @@ public class AILogic : MonoBehaviour
                         mPreDestination = mRigidBody.transform.position;
                         mNavAgent.SetDestination(mDestination);
                         mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
-                        mAnim.SetBool("IsMoving", mNavAgent.isStopped);
+                        //mAnim.SetBool("IsMoving", mNavAgent.isStopped);
                     }
                     else
                     {
                         DetermineWhatToDo();
                     }
                 }
+            }
+            else
+            {
+                mNavAgent.SetDestination(mCurrentTarget.transform.position);
             }
         }
         else
@@ -231,16 +191,31 @@ public class AILogic : MonoBehaviour
     {
         ResetUAI();
 
-        //if (mAmmoBoxes.Count <= 0)
-        //{
-        //    mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
-        //    return;
-        //}
+        if(bAtDestination)
+        {
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.High)
+            {
+                mAmmo.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.Medium)
+            {
+                mAmmo.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.Low)
+            {
+                mAmmo.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+        }
+        else
+        {
+            //DetermineWhatToDo();
+            MoveToDestination();
+        }
 
 
-        bAtDestination = false;
-        mAmmoBoxes.TrimExcess();
-        mNavAgent.SetDestination(mDestination);
+        //bAtDestination = false;
+        //mAmmoBoxes.TrimExcess();
+        //mNavAgent.SetDestination(mDestination);
         //mNavAgent.Warp(mDestination);
         //mNavAgent.SetDestination(mAmmoBoxes.Values[0].transform.position);
         //mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
@@ -252,11 +227,24 @@ public class AILogic : MonoBehaviour
 
         if (bAtDestination)
         {
-            mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
+            //mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
+            if (mHealthComp.HealthState == HealthComponent.EHealthState.Healthy)
+            {
+                mHealth.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mHealthComp.HealthState == HealthComponent.EHealthState.Injured)
+            {
+                mHealth.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mHealthComp.HealthState == HealthComponent.EHealthState.Severe)
+            {
+                mHealth.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
         }
         else
         {
-            mNavAgent.SetDestination(mDestination);
+            MoveToDestination();
+            //mNavAgent.SetDestination(mDestination);
         }
     }
 
@@ -265,7 +253,7 @@ public class AILogic : MonoBehaviour
     {
         if (!bAtDestination)
         {
-            mNavAgent.SetDestination(mDestination);
+            //mNavAgent.SetDestination(mDestination);
             mAgent.UpdateUAI();
         }
 
@@ -279,7 +267,7 @@ public class AILogic : MonoBehaviour
                 bAtDestination = true;
             }
         }
-        mAgent.UpdateUAI();
+        //mAgent.UpdateUAI();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -364,6 +352,7 @@ public class AILogic : MonoBehaviour
             }
             mPreDestination = mRigidBody.transform.position;
             mDestination = mMedBoxes.Values[0].transform.position;
+            mCurrentTarget = mMedBoxes.Values[0].gameObject;
         }
         if (mAgent.TopAction.handle == GetAmmo)
         {
@@ -399,6 +388,7 @@ public class AILogic : MonoBehaviour
             }
             mPreDestination = mRigidBody.transform.position;
             mDestination = mAmmoBoxes.Values[0].transform.position;
+            mCurrentTarget = mAmmoBoxes.Values[0].gameObject;
         }
         if (mAgent.TopAction.handle == AttackEnemy)
         {
@@ -436,7 +426,11 @@ public class AILogic : MonoBehaviour
                 }
                 else
                 {
-
+                    mRWTrace.OnStopShooting();
+                    mRWTrace.OnStopShoot();
+                    bIsEnemyInAttackDist.Value = false;
+                    mPreDestination = mRigidBody.transform.position;
+                    mDestination = mCurrentTarget.transform.position;
                 }
             }
         }

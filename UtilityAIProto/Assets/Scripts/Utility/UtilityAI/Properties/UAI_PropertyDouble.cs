@@ -29,7 +29,7 @@ namespace UtilityAIProto
         // Update is called once per frame
         void Update()
         {
-            Value += Time.deltaTime * changePerTick;
+            Value += UAI_Time.MyTime * changePerTick;
         }
 
         public double Value

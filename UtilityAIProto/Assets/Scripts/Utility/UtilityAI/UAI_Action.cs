@@ -6,7 +6,7 @@ using UnityEngine;
 namespace UtilityAIProto
 {
     [Serializable]
-    [AddComponentMenu("UtilityAILynch/Action")]
+    [AddComponentMenu("UtilityAIProto/Action")]
     public class UAI_Action : MonoBehaviour
     {
         public float time;

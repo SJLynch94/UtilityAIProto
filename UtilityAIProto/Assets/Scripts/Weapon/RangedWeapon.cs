@@ -20,6 +20,11 @@ public abstract class RangedWeapon : Weapons
  
     protected float mFireRateTimer = 0.0f; // Time until weapon can be fired again
 
+    public float Range
+    {
+        get { return mRange; }
+    }
+
     private void FixedUpdate()
     {
         if (mFireRateTimer > 0.0f) mFireRateTimer -= UtilityAIProto.UAI_Time.MyTime;
@@ -31,6 +36,19 @@ public abstract class RangedWeapon : Weapons
                 mWeaponState = EWeaponState.Idle;
                 FinishReload();
             }
+        }
+
+        if (mAmmo >= (mMaxAmmo / 3) * 2 && mAmmo <= mMaxAmmo)
+        {
+            AmmoState = EAmmoState.High;
+        }
+        if (mAmmo <= (mMaxAmmo / 3) * 2 - 1 && mAmmo >= (mMaxAmmo / 3))
+        {
+            AmmoState = EAmmoState.Medium;
+        }
+        if (mAmmo <= (mMaxAmmo / 3) - 1 && mAmmo >= 0)
+        {
+            AmmoState = EAmmoState.Low;
         }
     }
 
