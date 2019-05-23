@@ -40,6 +40,8 @@ public class AILogic : MonoBehaviour
 
     SphereCollider mSphereCollider;
 
+    HealthComponent mHealthComp;
+
     GunLogic mGunLogic;
     [SerializeField]
     RW_Trace mRWTrace;
@@ -93,11 +95,11 @@ public class AILogic : MonoBehaviour
 
     void Awake()
     {
-        mCameraPos = GameObject.FindGameObjectWithTag("CameraPos").transform;
         mCameraPos = GameObject.Find("CameraPos").transform;
         mCamera = GetComponent<Camera>();
         mRigidBody = GetComponent<Rigidbody>();
         mSphereCollider = GetComponent<SphereCollider>();
+        mHealthComp = GetComponent<HealthComponent>();
         mGunLogic = GetComponent<GunLogic>();
         mRWTrace = GetComponentInChildren<RW_Trace>();
         mNavAgent = GetComponent<NavMeshAgent>();
@@ -160,6 +162,17 @@ public class AILogic : MonoBehaviour
     {
         ResetUAI();
         
+        if(bAtDestination)
+        {
+            bHasEnemy.Value = true;
+            bIsEnemyInDist.Value = true;
+            bIsEnemyInAttackDist.Value = true;
+            mKill.Value += 60.0f * UtilityAIProto.UAI_Time.MyTime;
+        }
+        else
+        {
+            MoveToDestination();
+        }
     }
 
     private void MoveToArea()
@@ -231,19 +244,25 @@ public class AILogic : MonoBehaviour
     {
         ResetUAI();
 
-        //if (mAmmoBoxes.Count <= 0)
-        //{
-        //    mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
-        //    return;
-        //}
-
-
-        bAtDestination = false;
-        mAmmoBoxes.TrimExcess();
-        mNavAgent.SetDestination(mDestination);
-        //mNavAgent.Warp(mDestination);
-        //mNavAgent.SetDestination(mAmmoBoxes.Values[0].transform.position);
-        //mAmmo.Value += 5.0f * UtilityAIProto.UAI_Time.MyTime;
+        if(bAtDestination)
+        {
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.High)
+            {
+                mAmmo.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.Medium)
+            {
+                mAmmo.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mRWTrace.AmmoState == Weapons.EAmmoState.Low)
+            {
+                mAmmo.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+        }
+        else
+        {
+            MoveToDestination();
+        }
     }
 
     private void GetHealth()
@@ -252,11 +271,24 @@ public class AILogic : MonoBehaviour
 
         if (bAtDestination)
         {
-            mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
+            //mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
+            if(mHealthComp.HealthState == HealthComponent.EHealthState.Healthy)
+            {
+                mHealth.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mHealthComp.HealthState == HealthComponent.EHealthState.Injured)
+            {
+                mHealth.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (mHealthComp.HealthState == HealthComponent.EHealthState.Severe)
+            {
+                mHealth.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+            }
         }
         else
         {
-            mNavAgent.SetDestination(mDestination);
+            MoveToDestination();
+            //mNavAgent.SetDestination(mDestination);
         }
     }
 
@@ -265,8 +297,9 @@ public class AILogic : MonoBehaviour
     {
         if (!bAtDestination)
         {
-            mNavAgent.SetDestination(mDestination);
-            mAgent.UpdateUAI();
+            MoveToDestination();
+            //mNavAgent.SetDestination(mDestination);
+            //mAgent.UpdateUAI();
         }
 
         if (mRigidBody.transform.position == mDestination ||
@@ -308,6 +341,7 @@ public class AILogic : MonoBehaviour
                 {
                     if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
                     {
+                        //mNavAgent.Stop();
                         bCanSeeEnemy.Value = true;
                         mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
                         mRWTrace.OnShoot();
@@ -427,7 +461,9 @@ public class AILogic : MonoBehaviour
                         {
                             if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
                             {
+                                //mNavAgent.Stop();
                                 bCanSeeEnemy.Value = true;
+                                mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
                                 Debug.Log("Target: " + mCurrentTarget.name + " is close to the " + transform.name + " and is in front of " + transform.name);
                                 mRWTrace.OnShoot();
                             }
@@ -436,7 +472,8 @@ public class AILogic : MonoBehaviour
                 }
                 else
                 {
-
+                    bIsEnemyInAttackDist.Value = false;
+                    MoveToDestination();
                 }
             }
         }
@@ -468,6 +505,10 @@ public class AILogic : MonoBehaviour
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            mEnemies.RemoveAt(i);
                         }
                     }
                     mCurrentTarget = mEnemies.Values[0];

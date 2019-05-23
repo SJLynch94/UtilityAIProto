@@ -634,6 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac7ef192c3fec2488884fc125564940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mHealth: 100
 --- !u!1 &4212740473994386589
 GameObject:
   m_ObjectHideFlags: 0
@@ -5639,15 +5640,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22446376, guid: c7f6ae5cb7508b8468b58ad11585da22, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22446376, guid: c7f6ae5cb7508b8468b58ad11585da22, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22446376, guid: c7f6ae5cb7508b8468b58ad11585da22, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22446376, guid: c7f6ae5cb7508b8468b58ad11585da22, type: 3}
       propertyPath: m_AnchoredPosition.x

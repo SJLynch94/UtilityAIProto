@@ -32,6 +32,19 @@ public abstract class RangedWeapon : Weapons
                 FinishReload();
             }
         }
+
+        if (mAmmo >= (mMaxAmmo / 3) * 2 && mAmmo <= mMaxAmmo)
+        {
+            AmmoState = EAmmoState.High;
+        }
+        if (mAmmo <= (mMaxAmmo / 3) * 2 - 1 && mAmmo >= (mMaxAmmo / 3))
+        {
+            AmmoState = EAmmoState.Medium;
+        }
+        if (mAmmo <= (mMaxAmmo / 3) - 1 && mAmmo >= 0)
+        {
+            AmmoState = EAmmoState.Low;
+        }
     }
 
     public override void OnShoot()
