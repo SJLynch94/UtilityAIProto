@@ -8,6 +8,7 @@ namespace UtilityAIProto
     {
         UAI_Agent agent;
         Transform mTransform;
+        OverlayUI mUI;
 
         float mainSpeed = 100.0f; //regular speed
         float shiftAdd = 250.0f; //multiplied by how long shift is held.  Basically running
@@ -20,12 +21,13 @@ namespace UtilityAIProto
         void Start()
         {
             mTransform = transform;
+            mUI = FindObjectOfType<OverlayUI>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            agent = FindObjectOfType<OverlayUI>().DisplayedAgent;
+            agent = mUI.DisplayedAgent;
             if(agent)
             {
                 transform.parent = agent.GetComponent<AILogic>().CameraTransform;
@@ -38,12 +40,17 @@ namespace UtilityAIProto
                 transform.position = mTransform.position;
                 transform.rotation = mTransform.rotation;
 
-                lastMouse = Input.mousePosition - lastMouse;
-                lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-                lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-                transform.eulerAngles = lastMouse;
+                if(Input.GetMouseButton(1))
+                {
+                    lastMouse = Input.mousePosition - lastMouse;
+                    lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
+                    lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
+                    transform.eulerAngles = lastMouse;
+                    //lastMouse = Input.mousePosition;
+                    //Mouse  camera angle done. 
+                }
                 lastMouse = Input.mousePosition;
-                //Mouse  camera angle done.  
+
 
                 //Keyboard commands
                 float f = 0.0f;
