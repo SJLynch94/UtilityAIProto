@@ -267,7 +267,12 @@ public class AILogic : MonoBehaviour
                 bAtDestination = true;
             }
         }
-        //mAgent.UpdateUAI();
+
+        if(bAtDestination)
+        {
+            ResetUAI();
+        }
+        mAgent.UpdateUAI();
     }
 
     private void OnTriggerEnter(Collider other)
