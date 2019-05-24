@@ -268,10 +268,10 @@ public class AILogic : MonoBehaviour
             }
         }
 
-        if(bAtDestination)
-        {
-            ResetUAI();
-        }
+        //if(bAtDestination)
+        //{
+        //    ResetUAI();
+        //}
         mAgent.UpdateUAI();
     }
 
