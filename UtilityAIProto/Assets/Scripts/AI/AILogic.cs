@@ -257,15 +257,44 @@ public class AILogic : MonoBehaviour
             mAgent.UpdateUAI();
         }
 
-        if (mRigidBody.transform.position == mDestination ||
-            mRigidBody.transform.position.x - 1 <= mDestination.x ||
-            mRigidBody.transform.position.x + 1 >= mDestination.x)
+        //if (mRigidBody.transform.position == mDestination ||
+        //    mRigidBody.transform.position.x - 1 <= mDestination.x ||
+        //    mRigidBody.transform.position.x + 1 >= mDestination.x)
+        //{
+        //    if (mRigidBody.transform.position.z - 1 <= mDestination.z ||
+        //        mRigidBody.transform.position.z + 1 >= mDestination.z)
+        //    {
+        //        bAtDestination = true;
+        //    }
+        //}
+
+        if(UtilityAIProto.UAI_Time.paused)
         {
-            if (mRigidBody.transform.position.z - 1 <= mDestination.z ||
-                mRigidBody.transform.position.z + 1 >= mDestination.z)
-            {
-                bAtDestination = true;
-            }
+            mNavAgent.isStopped = true;
+        }
+        else
+        {
+            mNavAgent.isStopped = false;
+        }
+
+        if(mAgent.IsPaused)
+        {
+            mNavAgent.isStopped = true;
+        }
+        else
+        {
+            mNavAgent.isStopped = false;
+        }
+
+        if(mDestination == mPreDestination)
+        {
+            ResetUAI();
+        }
+
+        if(mCurrentTarget)
+        {
+            var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);
+            mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
         }
 
         //if(bAtDestination)
