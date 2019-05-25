@@ -4818,8 +4818,8 @@ MonoBehaviour:
   modifiable: 1
   randomStartVal: 0
   minVal: 0
-  maxVal: 240
-  startVal: 90
+  maxVal: 250
+  startVal: 200
   changePerTick: 0
 --- !u!1 &4884777046266673995
 GameObject:

@@ -167,7 +167,7 @@ public class AILogic : MonoBehaviour
                         mDestination = mCurrentTarget.transform.position;
                         mPreDestination = mRigidBody.transform.position;
                         mNavAgent.SetDestination(mDestination);
-                        mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+                        //mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
                         //mAnim.SetBool("IsMoving", mNavAgent.isStopped);
                     }
                     else
@@ -271,19 +271,23 @@ public class AILogic : MonoBehaviour
         if(UtilityAIProto.UAI_Time.paused)
         {
             mNavAgent.isStopped = true;
+            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
         }
         else
         {
             mNavAgent.isStopped = false;
+            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
         }
 
         if(mAgent.IsPaused)
         {
             mNavAgent.isStopped = true;
+            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
         }
         else
         {
             mNavAgent.isStopped = false;
+            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
         }
 
         if(mDestination == mPreDestination)

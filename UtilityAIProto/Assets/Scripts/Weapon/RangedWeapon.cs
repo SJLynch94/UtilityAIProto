@@ -102,6 +102,7 @@ public abstract class RangedWeapon : Weapons
         {
             mMagAmmo += neededAmmo;
             mAmmo -= neededAmmo;
+            GetComponentInParent<AILogic>().mAmmo.Value += neededAmmo * UtilityAIProto.UAI_Time.MyTime;
         }
         else
         {
