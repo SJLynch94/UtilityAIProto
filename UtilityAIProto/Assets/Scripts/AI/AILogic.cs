@@ -32,6 +32,8 @@ public class AILogic : MonoBehaviour
     [SerializeField]
     public float mAttackDist;
     [SerializeField]
+    float mDist;
+    [SerializeField]
     public float mRotateSpeed = 3.0f;
     [SerializeField]
     public float mHeightMul = 1.5f;
@@ -85,7 +87,7 @@ public class AILogic : MonoBehaviour
         mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
         mAnim = GetComponent<Animator>();
         mPreDestination = mRigidBody.transform.position;
-        mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+        mAnim.SetInteger("WhatAmIDoing", 0);
 
         foreach (var e in FindObjectsOfType<AILogic>())
         {
@@ -271,23 +273,23 @@ public class AILogic : MonoBehaviour
         if(UtilityAIProto.UAI_Time.paused)
         {
             mNavAgent.isStopped = true;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+            mAnim.SetInteger("WhatAmIDoing", 0);
         }
         else
         {
             mNavAgent.isStopped = false;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+            mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
         if(mAgent.IsPaused)
         {
             mNavAgent.isStopped = true;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+            mAnim.SetInteger("WhatAmIDoing", 0);
         }
         else
         {
             mNavAgent.isStopped = false;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+            mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
         if(mDestination == mPreDestination)
@@ -299,6 +301,45 @@ public class AILogic : MonoBehaviour
         {
             var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);
             mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
+            Debug.Log(mAgent.name + " has target: " + mCurrentTarget.name + " and is in action: " + mAgent.TopAction.ToString());
+        }
+
+        if(mCurrentTarget.GetComponent<AILogic>())
+        {
+            bHasEnemy.Value = true;
+            mDist = Vector3.Distance(mCurrentTarget.transform.position, mRigidBody.transform.position);
+            if(mDist < mMaxDistance)
+            {
+                bIsEnemyInDist.Value = true;
+                if(mDist <= mAttackDist)
+                {
+                    bIsEnemyInAttackDist.Value = true;
+                    Ray ray = new Ray
+                    {
+                        origin = mRigidBody.transform.position,
+                        direction = (mCurrentTarget.transform.position - mRigidBody.transform.position).normalized
+                    };
+
+                    RaycastHit hit = new RaycastHit();
+                    if ((Vector3.Angle(ray.direction, mRigidBody.transform.forward)) < mFOVHalf * 2)
+                    {
+                        if (Physics.Raycast(ray.origin + Vector3.up * mHeightMul, ray.direction, out hit, mAttackDist))
+                        {
+                            if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
+                            {
+                                bCanSeeEnemy.Value = true;
+                                mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
+                                mRWTrace.OnShoot();
+                                Debug.Log("Target: " + mCurrentTarget.name + " is close to the " + transform.name + " and is in front of " + transform.name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            mKill.Value -= 150.0f * UtilityAIProto.UAI_Time.MyTime;
         }
 
         //if(bAtDestination)
@@ -470,6 +511,13 @@ public class AILogic : MonoBehaviour
                     mPreDestination = mRigidBody.transform.position;
                     mDestination = mCurrentTarget.transform.position;
                 }
+            }
+            else
+            {
+                bHasEnemy.Value = false;
+                bIsEnemyInAttackDist.Value = false;
+                bIsEnemyInDist.Value = false;
+                mKill.Value -= 20 * UtilityAIProto.UAI_Time.MyTime;
             }
         }
         if (mAgent.TopAction.handle == FindEnemy)

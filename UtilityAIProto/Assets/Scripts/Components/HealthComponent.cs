@@ -10,6 +10,7 @@ public class HealthComponent : MonoBehaviour
     protected int mMaxHealth = 100;
     protected int mMinHealth = 0;
 
+    UtilityAIProto.OverlayUI UI;
     AILogic mAgent;
 
     public EHealthState HealthState
@@ -78,12 +79,14 @@ public class HealthComponent : MonoBehaviour
         HealthState = EHealthState.Dead;
         mAgent.bHasHealth.Value = false;
         GetComponent<Animator>().SetBool("IsDead", true);
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(3.0f);
+        UI.RemoveAgent(GetComponent<UtilityAIProto.UAI_Agent>().agentName);
         Destroy(gameObject);
     }
 
     void Awake()
     {
         mAgent = GetComponent<AILogic>();
+        UI = FindObjectOfType<UtilityAIProto.OverlayUI>() as UtilityAIProto.OverlayUI;
     }
 }

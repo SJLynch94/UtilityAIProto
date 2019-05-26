@@ -136,7 +136,7 @@ namespace UtilityAIProto
             {
                 if(!CanEvaluate())
                 {
-                    Debug.Log("Cannot evaluate, UAI_Agent: " + agentName + " line 116");
+                    Debug.Log("Cannot evaluate, UAI_Agent: " + agentName + " line 139");
                     return;
                 }
                 StopTimer();

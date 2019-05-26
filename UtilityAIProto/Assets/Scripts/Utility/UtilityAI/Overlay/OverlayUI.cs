@@ -81,12 +81,15 @@ namespace UtilityAIProto
             //// Add Agents to the UI Agents
             for(var i = 0; i < agents.Length; ++i)
             {
-                GameObject tmpAgent = Instantiate(agentElement, new Vector3(agentContent.transform.position.x + 100,
-                    agentContent.transform.position.y + agentElements.Count * -22, 
+                if(agents[i].gameObject != null)
+                {
+                    GameObject tmpAgent = Instantiate(agentElement, new Vector3(agentContent.transform.position.x + 100,
+                    agentContent.transform.position.y + agentElements.Count * -22,
                     agentContent.transform.position.z), Quaternion.identity) as GameObject;
-                tmpAgent.transform.SetParent(agentContent.transform);
-                tmpAgent.GetComponent<OverlayUIAgentElement>().SetAgent(agents[i]);
-                agentElements.Add(tmpAgent);
+                    tmpAgent.transform.SetParent(agentContent.transform);
+                    tmpAgent.GetComponent<OverlayUIAgentElement>().SetAgent(agents[i]);
+                    agentElements.Add(tmpAgent);
+                }
             }
             agentContent.GetComponent<RectTransform>().sizeDelta = new Vector2(200, agentElements.Count * 22);
             utilitySpeedText.text = "Speed: " + UAI_Time.speed.ToString("0.00") + "x";
@@ -444,6 +447,28 @@ namespace UtilityAIProto
             utilitySpeedText.text = "Speed: " + UAI_Time.speed.ToString("0.00") + "x";
         }
 
+        public void RemoveAgent(string agentName)
+        {
+            //for (var i = 0; i < agents.Length; ++i)
+            //{
+            //    if (agents[i].agentName == agentName)
+            //    {
+            //        agents[i] = null;
+            //        agents[i] = agents[agents.Length - 1];
+            //        break;
+            //    }
+            //}
+            //agents.Resize(ref agents, agents.Length - 1);
+
+            for (var i = 0; i < agentElements.Count; ++i)
+            {
+                if(agentElements[i].GetComponent<UAI_Agent>().agentName == agentName)
+                {
+                    agentElements.RemoveAt(i);
+                }
+            }
+        }
+
         // Update is called once per frame
         void Update()
         {
@@ -467,11 +492,11 @@ namespace UtilityAIProto
                 actionElements[i].GetComponent<OverlayUIActionElement>().SetActionUI();
             }
 
-            if (bDisplayingAgent)
-            {
-                currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
-                actionTimerText.text = "Action Time: " + displayedAgent.ActionTimer.ToString("0.00");
-            }
+            //if (bDisplayingAgent)
+            //{
+            //    currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
+            //    actionTimerText.text = "Action Time: " + displayedAgent.ActionTimer.ToString("0.00");
+            //}
 
             for (var i = 0; i < historyElements.Count; ++i)
             {
@@ -482,6 +507,8 @@ namespace UtilityAIProto
 
             if (bDisplayingAgent)
             {
+                currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
+                actionTimerText.text = "Action Time: " + displayedAgent.ActionTimer.ToString("0.00");
                 for (var i = 0; i < displayedAgent.actionHistory.Count; ++i)
                 {
                     actionHistoryContent.GetComponent<RectTransform>().sizeDelta = new Vector2(155, historyElements.Count * 15 + 15);

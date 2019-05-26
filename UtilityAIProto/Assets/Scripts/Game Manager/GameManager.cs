@@ -30,8 +30,12 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     int mMedBoxesAmount;
 
+    List<GameObject> mPlayers = new List<GameObject>();
+
 	// Use this for initialization
 	void Awake () {
+
+        mAIAmount = PlayerPrefs.GetInt("mAIAmount");
 
         mTerrainWidth = mTerrain.terrainData.size.x;
         mTerrainLength = mTerrain.terrainData.size.z;
@@ -39,9 +43,24 @@ public class GameManager : MonoBehaviour {
         mXTerrainPos = mTerrain.transform.position.x;
         mZTerrainPos = mTerrain.transform.position.z;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void Start()
+    {
+        GameObject g;
+        for (var i = 0; i < mAIAmount; ++i)
+        {
+            float rx = Random.Range(mXTerrainPos, mXTerrainPos + mTerrainWidth);
+            float rz = Random.Range(mZTerrainPos, mZTerrainPos + mTerrainLength);
+            mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
+            mYVal += mYOffset;
+            g = Instantiate(AI, new Vector3(rx, mYVal, rz), Quaternion.identity);
+            g.GetComponent<UtilityAIProto.UAI_Agent>().agentName = "Soldier " + i;
+            mPlayers.Add(g);
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 
@@ -101,6 +120,7 @@ public class GameManager : MonoBehaviour {
             mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
             mYVal += mYOffset;
             g = Instantiate(AI, new Vector3(rx, mYVal, rz), Quaternion.identity);
+            g.GetComponent<UtilityAIProto.UAI_Agent>().agentName = "Soldier " + i;
             mAIList.Add(g.GetComponent<AILogic>());
         }
     }

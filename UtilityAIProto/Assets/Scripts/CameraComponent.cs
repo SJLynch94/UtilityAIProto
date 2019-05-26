@@ -33,6 +33,10 @@ namespace UtilityAIProto
                 transform.parent = agent.GetComponent<AILogic>().CameraTransform;
                 transform.position = agent.GetComponent<AILogic>().CameraTransform.position;
                 transform.rotation = agent.GetComponent<AILogic>().CameraTransform.rotation;
+
+                transform.parent = agent.GetComponent<AILogicTest>().CameraTransform;
+                transform.position = agent.GetComponent<AILogicTest>().CameraTransform.position;
+                transform.rotation = agent.GetComponent<AILogicTest>().CameraTransform.rotation;
             }
             else
             {

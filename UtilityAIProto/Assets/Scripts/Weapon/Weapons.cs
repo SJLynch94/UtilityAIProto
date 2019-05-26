@@ -44,6 +44,7 @@ public abstract class Weapons : MonoBehaviour
             mAmmo += ammo;
             if (mAmmo > mMaxAmmo) mAmmo = mMaxAmmo;
             GetComponentInParent<AILogic>().mAmmo.Value += ammo * UtilityAIProto.UAI_Time.MyTime;
+            GetComponentInParent<AILogicTest>().mAmmo.Value += ammo * UtilityAIProto.UAI_Time.MyTime;
             return true;
         }
         return false;

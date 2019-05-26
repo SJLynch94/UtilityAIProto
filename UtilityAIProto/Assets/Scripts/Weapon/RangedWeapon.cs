@@ -61,7 +61,7 @@ public abstract class RangedWeapon : Weapons
                 mFireRateTimer = (1.0f) / (mFireRate);
                 mMagAmmo--;
                 mWeaponState = EWeaponState.Firing;
-                GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Firing);
+                GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", 2);
                 ShootWeapon();
                 mMuzzleFlash.gameObject.SetActive(true);
                 if (mMagAmmo <= 0)
