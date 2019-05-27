@@ -9,7 +9,7 @@ public class RW_Trace : RangedWeapon
 
     public override void ShootWeapon()
     {
-        GetComponentInParent<AILogic>().mAmmo.Value -= 3.0f * UtilityAIProto.UAI_Time.MyTime;
+        GetComponentInParent<AILogic>().mAmmo.Value -= 25.0f * UtilityAIProto.UAI_Time.MyTime;
         Vector3 mShotOrigin = mMuzzleLocation.transform.position;
         Vector3 mShotDir = Vector3.zero;
         RaycastHit hit = new RaycastHit();

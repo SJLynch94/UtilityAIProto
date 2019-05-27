@@ -129,12 +129,12 @@ public class AILogic : MonoBehaviour
 
         if (bAtDestination)
         {
-            if(!mCurrentTarget)
+            if (!mCurrentTarget)
             {
                 bHasEnemy.Value = false;
                 bIsEnemyInDist.Value = false;
                 bIsEnemyInAttackDist.Value = false;
-                mKill.Value -= 40.0f * UtilityAIProto.UAI_Time.MyTime;
+                mKill.Value -= 50.0f * UtilityAIProto.UAI_Time.MyTime;
             }
         }
         else
@@ -152,7 +152,7 @@ public class AILogic : MonoBehaviour
             bHasEnemy.Value = true;
             bIsEnemyInDist.Value = true;
             bIsEnemyInAttackDist.Value = true;
-            mKill.Value += 60.0f * UtilityAIProto.UAI_Time.MyTime;
+            mKill.Value += 100.0f * UtilityAIProto.UAI_Time.MyTime;
         }
         else
         {
@@ -164,20 +164,17 @@ public class AILogic : MonoBehaviour
     {
         if (mCurrentTarget)
         {
-            if (mNavAgent.hasPath)
+            if (mNavAgent.hasPath && !mNavAgent.isPathStale)
             {
-                if (mNavAgent.isPathStale)
+                if (mCurrentTarget)
                 {
-                    if (mCurrentTarget)
-                    {
-                        mDestination = mCurrentTarget.transform.position;
-                        mPreDestination = mRigidBody.transform.position;
-                        mNavAgent.SetDestination(mDestination);
-                    }
-                    else
-                    {
-                        DetermineWhatToDo();
-                    }
+                    mDestination = mCurrentTarget.transform.position;
+                    mPreDestination = mRigidBody.transform.position;
+                    mNavAgent.SetDestination(mDestination);
+                }
+                else
+                {
+                    DetermineWhatToDo();
                 }
             }
             else
@@ -197,19 +194,19 @@ public class AILogic : MonoBehaviour
     {
         ResetUAI();
 
-        if(bAtDestination)
+        if (bAtDestination)
         {
             if (mRWTrace.AmmoState == Weapons.EAmmoState.High)
             {
-                mAmmo.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+                mAmmo.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
             }
             if (mRWTrace.AmmoState == Weapons.EAmmoState.Medium)
             {
-                mAmmo.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+                mAmmo.Value += 50.0f * UtilityAIProto.UAI_Time.MyTime;
             }
             if (mRWTrace.AmmoState == Weapons.EAmmoState.Low)
             {
-                mAmmo.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+                mAmmo.Value += 75.0f * UtilityAIProto.UAI_Time.MyTime;
             }
         }
         else
@@ -236,15 +233,15 @@ public class AILogic : MonoBehaviour
             //mHealth.Value += 30.0f * UtilityAIProto.UAI_Time.MyTime;
             if (mHealthComp.HealthState == HealthComponent.EHealthState.Healthy)
             {
-                mHealth.Value += 10.0f * UtilityAIProto.UAI_Time.MyTime;
+                mHealth.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
             }
             if (mHealthComp.HealthState == HealthComponent.EHealthState.Injured)
             {
-                mHealth.Value += 25.0f * UtilityAIProto.UAI_Time.MyTime;
+                mHealth.Value += 50.0f * UtilityAIProto.UAI_Time.MyTime;
             }
             if (mHealthComp.HealthState == HealthComponent.EHealthState.Severe)
             {
-                mHealth.Value += 65.0f * UtilityAIProto.UAI_Time.MyTime;
+                mHealth.Value += 75.0f * UtilityAIProto.UAI_Time.MyTime;
             }
         }
         else
@@ -274,7 +271,7 @@ public class AILogic : MonoBehaviour
         //    }
         //}
 
-        if(UtilityAIProto.UAI_Time.paused)
+        if (UtilityAIProto.UAI_Time.paused)
         {
             mNavAgent.isStopped = true;
             mAnim.SetInteger("WhatAmIDoing", 0);
@@ -285,7 +282,7 @@ public class AILogic : MonoBehaviour
             mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
-        if(mAgent.IsPaused)
+        if (mAgent.IsPaused)
         {
             mNavAgent.isStopped = true;
             mAnim.SetInteger("WhatAmIDoing", 0);
@@ -296,17 +293,17 @@ public class AILogic : MonoBehaviour
             mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
-        if(mDestination == mPreDestination)
+        if (mDestination == mPreDestination)
         {
             ResetUAI();
         }
 
-        if(mAnim.GetBool("IsDead") == true)
+        if (mAnim.GetBool("IsDead") == true)
         {
             mNavAgent.isStopped = true;
         }
 
-        if(mCurrentTarget)
+        if (mCurrentTarget)
         {
             var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);
             mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
@@ -319,10 +316,10 @@ public class AILogic : MonoBehaviour
         {
             bHasEnemy.Value = true;
             mDist = Vector3.Distance(mCurrentTarget.transform.position, mRigidBody.transform.position);
-            if(mDist < mMaxDistance)
+            if (mDist < mMaxDistance)
             {
                 bIsEnemyInDist.Value = true;
-                if(mDist <= mAttackDist)
+                if (mDist <= mAttackDist)
                 {
                     bIsEnemyInAttackDist.Value = true;
                     Ray ray = new Ray

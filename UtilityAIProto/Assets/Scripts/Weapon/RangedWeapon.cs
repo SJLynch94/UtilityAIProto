@@ -30,7 +30,7 @@ public abstract class RangedWeapon : Weapons
         if (mFireRateTimer > 0.0f) mFireRateTimer -= UtilityAIProto.UAI_Time.MyTime;
         if (mWeaponState == EWeaponState.Reloading)
         {
-            GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Reloading);
+            //GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", (int)AILogic.EAnimatorValue.Reloading);
             if ((mReloadTime -= UtilityAIProto.UAI_Time.MyTime) <= 0.0f)
             {
                 mWeaponState = EWeaponState.Idle;

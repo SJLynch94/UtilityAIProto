@@ -46,11 +46,11 @@ public abstract class Weapons : MonoBehaviour
 
             if (GetComponentInParent<AILogic>())
             {
-                GetComponentInParent<AILogic>().mAmmo.Value += ammo * UtilityAIProto.UAI_Time.MyTime;
+                GetComponentInParent<AILogic>().mAmmo.Value -= ammo * UtilityAIProto.UAI_Time.MyTime;
             }
             if(GetComponentInParent<AILogicTest>())
             {
-                GetComponentInParent<AILogicTest>().mAmmo.Value += ammo * UtilityAIProto.UAI_Time.MyTime;
+                GetComponentInParent<AILogicTest>().mAmmo.Value -= ammo * UtilityAIProto.UAI_Time.MyTime;
             }
             return true;
         }
