@@ -37,6 +37,8 @@ public class AILogicTest : MonoBehaviour
     [SerializeField]
     public float mFOVHalf = 30.0f;
 
+    float speed;
+
     HealthComponent mHealthComp;
     [SerializeField]
     RW_Trace mRWTrace;
@@ -64,7 +66,7 @@ public class AILogicTest : MonoBehaviour
         mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
         mAnim = GetComponent<Animator>();
         mPreDestination = mRigidBody.transform.position;
-        mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+        mAnim.SetInteger("WhatAmIDoing", 0);
 
         foreach (var e in FindObjectsOfType<AILogic>())
         {
@@ -75,6 +77,8 @@ public class AILogicTest : MonoBehaviour
                 mEnemies.Add(mag, e.gameObject);
             }
         }
+
+        mCameraPos = GetComponentInChildren<FindCameraPos>().transform;
 
         foreach (var e in FindObjectsOfType<MedBox>())
         {
@@ -109,6 +113,8 @@ public class AILogicTest : MonoBehaviour
         mDistance.maxVal = mMaxDistance;
         mAttackDistance.minVal = 0;
         mAttackDistance.maxVal = mAttackDist;
+        speed = mNavAgent.speed;
+        mNavAgent.speed = (speed * UtilityAIProto.UAI_Time.MyTime) * 50.0f;
     }
 
     // Update is called once per frame
@@ -122,23 +128,23 @@ public class AILogicTest : MonoBehaviour
         if (UtilityAIProto.UAI_Time.paused)
         {
             mNavAgent.isStopped = true;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+            mAnim.SetInteger("WhatAmIDoing", 0);
         }
         else
         {
             mNavAgent.isStopped = false;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+            mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
         if (mAgent.IsPaused)
         {
             mNavAgent.isStopped = true;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
+            mAnim.SetInteger("WhatAmIDoing", 0);
         }
         else
         {
             mNavAgent.isStopped = false;
-            mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Idle);
+            mAnim.SetInteger("WhatAmIDoing", 1);
         }
 
         if (mDestination == mPreDestination)
@@ -152,6 +158,8 @@ public class AILogicTest : MonoBehaviour
             mRigidBody.MoveRotation(Quaternion.Slerp(mRigidBody.transform.rotation, rott, t: UtilityAIProto.UAI_Time.MyTime * mRotateSpeed));
             Debug.Log(mAgent.name + " has target: " + mCurrentTarget.name + " and is in action: " + mAgent.TopAction.ToString());
         }
+
+        mNavAgent.speed = (speed * UtilityAIProto.UAI_Time.MyTime) * 50.0f;
     }
 
     void MoveToDestination()

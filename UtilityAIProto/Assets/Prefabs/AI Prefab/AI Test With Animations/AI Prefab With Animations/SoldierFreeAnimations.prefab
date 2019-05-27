@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d888791b122b4f4786b7818c8291807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentName: Soldier 3
+  agentName: Soldier 2
   bConsoleLogging: 1
   historyStates: 10
   secondsBetweenEvaluations: 2.5

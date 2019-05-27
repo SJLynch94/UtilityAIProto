@@ -80,7 +80,7 @@ public class HealthComponent : MonoBehaviour
         mAgent.bHasHealth.Value = false;
         GetComponent<Animator>().SetBool("IsDead", true);
         yield return new WaitForSeconds(3.0f);
-        UI.RemoveAgent(GetComponent<UtilityAIProto.UAI_Agent>().agentName);
+        UI.RemoveAgent(transform.name);
         Destroy(gameObject);
     }
 

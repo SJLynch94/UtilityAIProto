@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d888791b122b4f4786b7818c8291807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentName: Soldier 6
+  agentName: Soldier 5
   bConsoleLogging: 1
   historyStates: 10
   secondsBetweenEvaluations: 2.5
@@ -1503,7 +1503,7 @@ MonoBehaviour:
   randomStartVal: 0
   minVal: 0
   maxVal: 240
-  startVal: 60
+  startVal: 120
   changePerTick: 0
 --- !u!1 &1258269720946705612
 GameObject:

@@ -26,7 +26,7 @@ public class AmmoBox : MonoBehaviour
         if (gl.AddAmmo(mAmmoAmount))
         {
             //gl.GetComponent<AILogic>().mAmmoBoxes.Remove(this.GetComponent<AmmoBox>());
-            gl.GetComponentInParent<AILogic>().mAmmo.Value += mAmmoAmount * UtilityAIProto.UAI_Time.MyTime;
+            //gl.GetComponentInParent<AILogic>().mAmmo.Value += mAmmoAmount * UtilityAIProto.UAI_Time.MyTime;
             yield return new WaitForSeconds(3.0f);
             Destroy(gameObject);
         }

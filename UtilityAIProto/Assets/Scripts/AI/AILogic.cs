@@ -40,6 +40,8 @@ public class AILogic : MonoBehaviour
     [SerializeField]
     public float mFOVHalf = 30.0f;
 
+    float speed;
+
     SphereCollider mSphereCollider;
 
     HealthComponent mHealthComp;
@@ -72,6 +74,8 @@ public class AILogic : MonoBehaviour
 
         mMaxDistance = mRWTrace.Range;
         mAttackDist = mMaxDistance / 3.0f;
+        speed = mNavAgent.speed;
+        mNavAgent.speed = (speed * UtilityAIProto.UAI_Time.MyTime) * 50.0f;
     }
 
     void Awake()
@@ -158,19 +162,17 @@ public class AILogic : MonoBehaviour
 
     void MoveToDestination()
     {
-        if(mCurrentTarget)
+        if (mCurrentTarget)
         {
-            if(mNavAgent.hasPath)
+            if (mNavAgent.hasPath)
             {
-                if(mNavAgent.isPathStale)
+                if (mNavAgent.isPathStale)
                 {
-                    if(mCurrentTarget)
+                    if (mCurrentTarget)
                     {
                         mDestination = mCurrentTarget.transform.position;
                         mPreDestination = mRigidBody.transform.position;
                         mNavAgent.SetDestination(mDestination);
-                        //mAnim.SetInteger("WhatAmIDoing", (int)EAnimatorValue.Moving);
-                        //mAnim.SetBool("IsMoving", mNavAgent.isStopped);
                     }
                     else
                     {
@@ -180,6 +182,8 @@ public class AILogic : MonoBehaviour
             }
             else
             {
+                mDestination = mCurrentTarget.transform.position;
+                mPreDestination = mRigidBody.transform.position;
                 mNavAgent.SetDestination(mCurrentTarget.transform.position);
             }
         }
@@ -297,6 +301,11 @@ public class AILogic : MonoBehaviour
             ResetUAI();
         }
 
+        if(mAnim.GetBool("IsDead") == true)
+        {
+            mNavAgent.isStopped = true;
+        }
+
         if(mCurrentTarget)
         {
             var rott = Quaternion.LookRotation(mCurrentTarget.transform.position - mRigidBody.transform.position);
@@ -304,7 +313,9 @@ public class AILogic : MonoBehaviour
             Debug.Log(mAgent.name + " has target: " + mCurrentTarget.name + " and is in action: " + mAgent.TopAction.ToString());
         }
 
-        if(mCurrentTarget.GetComponent<AILogic>())
+        mNavAgent.speed = (speed * UtilityAIProto.UAI_Time.MyTime) * 50.0f;
+
+        if (mCurrentTarget.GetComponent<AILogic>())
         {
             bHasEnemy.Value = true;
             mDist = Vector3.Distance(mCurrentTarget.transform.position, mRigidBody.transform.position);

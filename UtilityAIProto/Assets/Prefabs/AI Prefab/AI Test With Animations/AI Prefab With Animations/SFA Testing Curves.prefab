@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d888791b122b4f4786b7818c8291807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentName: Soldier 4
+  agentName: Soldier 3
   bConsoleLogging: 1
   historyStates: 10
   secondsBetweenEvaluations: 2.5
@@ -589,6 +589,7 @@ MonoBehaviour:
   bIsEnemyInAttackDist: {fileID: 4884777045372292075}
   mMaxDistance: 50
   mAttackDist: 20
+  mDist: 0
   mRotateSpeed: 3
   mHeightMul: 1.5
   mFOVHalf: 30

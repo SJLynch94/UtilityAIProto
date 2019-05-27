@@ -462,7 +462,7 @@ namespace UtilityAIProto
 
             for (var i = 0; i < agentElements.Count; ++i)
             {
-                if(agentElements[i].GetComponent<UAI_Agent>().agentName == agentName)
+                if(agentElements[i].name == agentName)
                 {
                     agentElements.RemoveAt(i);
                 }
