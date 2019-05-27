@@ -336,7 +336,7 @@ public class AILogic : MonoBehaviour
                             if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
                             {
                                 bCanSeeEnemy.Value = true;
-                                mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
+                                mKill.Value += 100.0f * UtilityAIProto.UAI_Time.MyTime;
                                 mRWTrace.OnShoot();
                                 Debug.Log("Target: " + mCurrentTarget.name + " is close to the " + transform.name + " and is in front of " + transform.name);
                             }
@@ -384,7 +384,7 @@ public class AILogic : MonoBehaviour
                     if (hit.collider.transform.root.gameObject.GetComponent<AILogic>())
                     {
                         bCanSeeEnemy.Value = true;
-                        mKill.Value += 90.0f * UtilityAIProto.UAI_Time.MyTime;
+                        mKill.Value += 100.0f * UtilityAIProto.UAI_Time.MyTime;
                         mRWTrace.OnShoot();
                         Debug.Log("Target: " + other.name + " is close to the " + transform.name + " and is in front of " + transform.name);
 
@@ -525,7 +525,7 @@ public class AILogic : MonoBehaviour
                 bHasEnemy.Value = false;
                 bIsEnemyInAttackDist.Value = false;
                 bIsEnemyInDist.Value = false;
-                mKill.Value -= 20 * UtilityAIProto.UAI_Time.MyTime;
+                mKill.Value -= 50.0f * UtilityAIProto.UAI_Time.MyTime;
             }
         }
         if (mAgent.TopAction.handle == FindEnemy)
@@ -554,6 +554,14 @@ public class AILogic : MonoBehaviour
                                     {
                                         bIsEnemyInAttackDist.Value = true;
                                     }
+                                    else
+                                    {
+                                        bIsEnemyInAttackDist.Value = false;
+                                    }
+                                }
+                                else
+                                {
+                                    bIsEnemyInDist.Value = false;
                                 }
                             }
                         }
@@ -564,7 +572,7 @@ public class AILogic : MonoBehaviour
                     mDestination = mCurrentTarget.transform.position;
                 }
             }
-            else
+            else if(mCurrentTarget.GetComponent<AILogic>())
             {
                 bHasEnemy.Value = true;
                 mPreDestination = mRigidBody.transform.position;
