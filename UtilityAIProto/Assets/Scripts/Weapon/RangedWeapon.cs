@@ -102,14 +102,28 @@ public abstract class RangedWeapon : Weapons
         {
             mMagAmmo += neededAmmo;
             mAmmo -= neededAmmo;
-            GetComponentInParent<AILogic>().mAmmo.Value += neededAmmo * UtilityAIProto.UAI_Time.MyTime;
+            if(GetComponentInParent<AILogic>())
+            {
+                GetComponentInParent<AILogic>().mAmmo.Value += neededAmmo * UtilityAIProto.UAI_Time.MyTime;
+            }
+            if (GetComponentInParent<AILogicTest>())
+            {
+                GetComponentInParent<AILogicTest>().mAmmo.Value += neededAmmo * UtilityAIProto.UAI_Time.MyTime;
+            }
         }
         else
         {
             mMagAmmo += mAmmo;
             mAmmo = 0;
-            GetComponentInParent<AILogic>().mAmmo.Value += mMaxMagAmmo * UtilityAIProto.UAI_Time.MyTime;
-            GetComponentInParent<AILogic>().bHasAmmo.Value = false;
+            if (GetComponentInParent<AILogic>())
+            {
+                GetComponentInParent<AILogic>().mAmmo.Value += mMaxMagAmmo * UtilityAIProto.UAI_Time.MyTime;
+                GetComponentInParent<AILogic>().bHasAmmo.Value = false;
+            }
+            if (GetComponentInParent<AILogicTest>())
+            {
+                GetComponentInParent<AILogicTest>().mAmmo.Value += mMaxMagAmmo * UtilityAIProto.UAI_Time.MyTime;
+            }
         }
     }
 
