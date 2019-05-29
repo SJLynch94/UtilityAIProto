@@ -8,12 +8,14 @@ public abstract class Weapons : MonoBehaviour
     public enum EWeaponState { Idle, Firing, Reloading };
     public enum EWeaponFireType { SemiAuto, Burst, Auto };
     public enum EAmmoState { High, Medium, Low };
+    public enum EMagState { High, Medium, Low };
 
     protected AudioSource mWeaponAudioSource; // Weapons audio source
 
     public EWeaponFireType mWeaponFireType;
     public EWeaponState mWeaponState;
     public EAmmoState mAmmoState = EAmmoState.High;
+    public EMagState mMagState = EMagState.High;
 
     public string mWeaponName = "";
     public string mWeaponDescription = "";
@@ -66,6 +68,12 @@ public abstract class Weapons : MonoBehaviour
     {
         get { return mAmmoState; }
         set { mAmmoState = value; }
+    }
+
+    public EMagState MagState
+    {
+        get { return mMagState; }
+        set { mMagState = value; }
     }
 
     private void Start()

@@ -226,7 +226,7 @@ MonoBehaviour:
   mWeaponDescription: Tactical Sub-Machine Gun
   mWeaponLocation: {x: 0, y: 0, z: 0}
   mWeaponRotation: {x: 0, y: 0, z: 0}
-  mWeaponDamage: 8
+  mWeaponDamage: 4
   mAmmo: 125
   mMaxAmmo: 250
   mMaxMagAmmo: 25
@@ -263,6 +263,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5458962572921679268}
     m_Modifications:
+    - target: {fileID: 717761690302474210, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
+        type: 3}
+      propertyPath: m_Name
+      value: WFX_MF FPS RIFLE1
+      objectReference: {fileID: 0}
+    - target: {fileID: 717761690302474210, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 717761690302380994, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
         type: 3}
       propertyPath: m_RootOrder
@@ -281,16 +291,6 @@ PrefabInstance:
     - target: {fileID: 717761690302380994, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 717761690302474210, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
-        type: 3}
-      propertyPath: m_Name
-      value: WFX_MF FPS RIFLE1
-      objectReference: {fileID: 0}
-    - target: {fileID: 717761690302474210, guid: 130cea8513dfd714fad8d4f32ea0a3c1,
-        type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

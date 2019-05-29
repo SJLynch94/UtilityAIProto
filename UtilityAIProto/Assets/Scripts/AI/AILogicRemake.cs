@@ -286,6 +286,11 @@ public class AILogicRemake : MonoBehaviour
                                     }
                                     
                                 }
+                                else
+                                {
+                                    mRWTrace.OnStopShoot();
+                                    mRWTrace.OnStopShooting();
+                                }
                             }
                         }
                     }
@@ -429,6 +434,8 @@ public class AILogicRemake : MonoBehaviour
                 else
                 {
                     bIsEnemyInAttackDist.Value = false;
+                    mRWTrace.OnStopShoot();
+                    mRWTrace.OnStopShooting();
                     return;
                 }
             }

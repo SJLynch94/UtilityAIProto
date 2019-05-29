@@ -60,6 +60,10 @@ public abstract class RangedWeapon : Weapons
             {
                 mFireRateTimer = (1.0f) / (mFireRate);
                 mMagAmmo--;
+                if(GetComponentInParent<AILogic>())
+                {
+
+                }
                 mWeaponState = EWeaponState.Firing;
                 GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", 2);
                 ShootWeapon();
