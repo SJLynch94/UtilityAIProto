@@ -44,7 +44,7 @@ namespace UtilityAIProto
 
         public void Select()
         {
-            if(!bSelected)
+            if (!bSelected)
             {
                 UI.DisplayActionConsiderations(Action, false);
                 bSelected = true;

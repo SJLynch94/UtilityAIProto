@@ -73,6 +73,13 @@ public class HealthComponent : MonoBehaviour
 
     IEnumerator Die()
     {
+        if (UI)
+        {
+            if (GetComponent<UtilityAIProto.UAI_Agent>() == UI.DisplayedAgent)
+            {
+                Camera.main.transform.parent = null;
+            }
+        }
         HealthState = EHealthState.Dead;
         mAgent.bHasHealth.Value = false;
         GetComponent<Animator>().SetBool("IsDead", true);

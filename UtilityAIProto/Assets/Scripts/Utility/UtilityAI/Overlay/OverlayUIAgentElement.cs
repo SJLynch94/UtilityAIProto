@@ -41,20 +41,20 @@ namespace UtilityAIProto
 
         public void Select()
         {
-            if(!bSelected)
-            {
-                UI.DisplayAgent(Agent, false);
-                bSelected = true;
-                Agent.AIIndicator.SetActive(true);
-                GetComponent<Button>().colors = selectedColourBlock;
-            }
-            else
-            {
-                UI.DisplayAgent(Agent, true);
-                bSelected = false;
-                Agent.AIIndicator.SetActive(false);
-                GetComponent<Button>().colors = normalColourBlock;
-            }
+                if (!bSelected)
+                {
+                    UI.DisplayAgent(Agent, false);
+                    bSelected = true;
+                    Agent.AIIndicator.SetActive(true);
+                    GetComponent<Button>().colors = selectedColourBlock;
+                }
+                else
+                {
+                    UI.DisplayAgent(Agent, true);
+                    bSelected = false;
+                    Agent.AIIndicator.SetActive(false);
+                    GetComponent<Button>().colors = normalColourBlock;
+                }
         }
 
         public void PauseAgent()

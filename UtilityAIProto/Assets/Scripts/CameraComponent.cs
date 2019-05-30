@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UtilityAIProto
 {
@@ -16,6 +17,8 @@ namespace UtilityAIProto
         float camSens = 0.25f; //How sensitive it with mouse
         private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
         private float totalRun = 1.0f;
+
+        bool bIsAttached = false;
 
         // Start is called before the first frame update
         void Start()
@@ -42,13 +45,15 @@ namespace UtilityAIProto
                     transform.parent = agent.GetComponent<AILogicTest>().CameraTransform;
                     transform.position = agent.GetComponent<AILogicTest>().CameraTransform.position;
                     transform.rotation = agent.GetComponent<AILogicTest>().CameraTransform.rotation;
-                } 
+                }
+                bIsAttached = true;
             }
             else
             {
                 transform.parent = null;
                 transform.position = mTransform.position;
                 transform.rotation = mTransform.rotation;
+                bIsAttached = false;
 
                 if(Input.GetMouseButton(1))
                 {
@@ -93,6 +98,16 @@ namespace UtilityAIProto
                     transform.Translate(p);
                 }
             }
+
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                LoadMainMenu();
+            }
+        }
+
+        public void LoadMainMenu()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
         }
 
         private Vector3 GetBaseInput()

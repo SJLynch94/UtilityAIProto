@@ -23,7 +23,7 @@ public class AILogic : MonoBehaviour
     public bool bAtDestination, bMoving;
 
     UtilityAIProto.UAI_Agent mAgent;
-    public UtilityAIProto.UAI_PropertyFloat mKill, mZone, mHealth, mAmmo, mAttackEnemy, mReload;
+    public UtilityAIProto.UAI_PropertyFloat mKill, mZone, mHealth, mAmmo, mAttackEnemy;
     public UtilityAIProto.UAI_PropertyBool bHasEnemy, bHasHealth, bHasAmmo, bZoneMoving, bCanSeeEnemy, bIsEnemyInDist, bIsEnemyInAttackDist;
 
     NavMeshAgent mNavAgent;
@@ -239,31 +239,6 @@ public class AILogic : MonoBehaviour
         {
             MoveToDestination();
             //mNavAgent.SetDestination(mDestination);
-        }
-    }
-
-    private void ReloadWeapon()
-    {
-        ResetUAI();
-
-        if(bAtDestination)
-        {
-            if (mRWTrace.MagState == Weapons.EMagState.High)
-            {
-                mReload.Value += 50.0f * UtilityAIProto.UAI_Time.MyTime;
-            }
-            if (mRWTrace.MagState == Weapons.EMagState.Medium)
-            {
-                mReload.Value += 100.0f * UtilityAIProto.UAI_Time.MyTime;
-            }
-            if (mRWTrace.MagState == Weapons.EMagState.Low)
-            {
-                mReload.Value += 150.0f * UtilityAIProto.UAI_Time.MyTime;
-            }
-        }
-        else
-        {
-            MoveToDestination();
         }
     }
 
@@ -640,10 +615,10 @@ public class AILogic : MonoBehaviour
                 mDestination = mCurrentTarget.transform.position;
             }
         }
-        if(mAgent.TopAction.handle == ReloadWeapon)
-        {
-
-        }
+        //if(mAgent.TopAction.handle == ReloadWeapon)
+        //{
+        //    mRWTrace.OnReload();
+        //}
     }
 
 

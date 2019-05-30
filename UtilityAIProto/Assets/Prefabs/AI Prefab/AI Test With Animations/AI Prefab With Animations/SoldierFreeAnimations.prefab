@@ -539,20 +539,20 @@ MonoBehaviour:
   linkedActions:
   - action: {fileID: 4884777046751793517}
     actionEnabled: 1
-    cooldown: 2
-    cooldownTimer: 1
+    cooldown: 4
+    cooldownTimer: 2
   - action: {fileID: 4884777046555785583}
     actionEnabled: 1
-    cooldown: 1
-    cooldownTimer: 2
+    cooldown: 3
+    cooldownTimer: 4
   - action: {fileID: 4884777045400251390}
     actionEnabled: 1
-    cooldown: 1
-    cooldownTimer: 2
+    cooldown: 2
+    cooldownTimer: 3
   - action: {fileID: 4884777046266673994}
     actionEnabled: 1
-    cooldown: 1
-    cooldownTimer: 0
+    cooldown: 5
+    cooldownTimer: 4
   actionHistory: []
   actionTimer: 0
   newAction: 0
@@ -580,6 +580,7 @@ MonoBehaviour:
   mHealth: {fileID: 4884777046621837663}
   mAmmo: {fileID: 4884777046172022904}
   mAttackEnemy: {fileID: 4884777045300724304}
+  mReload: {fileID: 0}
   bHasEnemy: {fileID: 4884777045805773559}
   bHasHealth: {fileID: 4884777045271180515}
   bHasAmmo: {fileID: 4884777045918400498}

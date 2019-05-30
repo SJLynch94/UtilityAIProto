@@ -60,9 +60,17 @@ public abstract class RangedWeapon : Weapons
             {
                 mFireRateTimer = (1.0f) / (mFireRate);
                 mMagAmmo--;
-                if(GetComponentInParent<AILogic>())
+                if(mMagAmmo >= (mMaxMagAmmo / 3) * 2 && mMagAmmo <= mMaxMagAmmo)
                 {
-
+                    MagState = EMagState.High;
+                }
+                if (mMagAmmo <= (mMaxMagAmmo / 3) * 2 - 1 && mMagAmmo >= (mMaxMagAmmo / 3))
+                {
+                    MagState = EMagState.Medium;
+                }
+                if (mMagAmmo <= (mMaxMagAmmo / 3) * 2 && mMagAmmo >= 0)
+                {
+                    MagState = EMagState.Low;
                 }
                 mWeaponState = EWeaponState.Firing;
                 GetComponentInParent<Animator>().SetInteger("WhatAmIDoing", 2);

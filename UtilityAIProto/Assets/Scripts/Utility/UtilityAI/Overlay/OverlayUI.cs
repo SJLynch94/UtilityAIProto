@@ -492,12 +492,6 @@ namespace UtilityAIProto
                 actionElements[i].GetComponent<OverlayUIActionElement>().SetActionUI();
             }
 
-            //if (bDisplayingAgent)
-            //{
-            //    currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
-            //    actionTimerText.text = "Action Time: " + displayedAgent.ActionTimer.ToString("0.00");
-            //}
-
             for (var i = 0; i < historyElements.Count; ++i)
             {
                 Destroy(historyElements[i]);
