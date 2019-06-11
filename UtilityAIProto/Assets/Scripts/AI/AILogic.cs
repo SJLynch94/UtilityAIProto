@@ -22,9 +22,9 @@ public class AILogic : MonoBehaviour
     public Vector3 mDestination, mPreDestination;
     public bool bAtDestination, bMoving;
 
-    UtilityAIProto.UAI_Agent mAgent;
-    public UtilityAIProto.UAI_PropertyFloat mKill, mZone, mHealth, mAmmo, mAttackEnemy;
-    public UtilityAIProto.UAI_PropertyBool bHasEnemy, bHasHealth, bHasAmmo, bZoneMoving, bCanSeeEnemy, bIsEnemyInDist, bIsEnemyInAttackDist;
+    UtilityAIProto.Agent mAgent;
+    public UtilityAIProto.PropertyFloat mKill, mZone, mHealth, mAmmo, mAttackEnemy;
+    public UtilityAIProto.PropertyBool bHasEnemy, bHasHealth, bHasAmmo, bZoneMoving, bCanSeeEnemy, bIsEnemyInDist, bIsEnemyInAttackDist;
 
     NavMeshAgent mNavAgent;
     [SerializeField]
@@ -88,7 +88,7 @@ public class AILogic : MonoBehaviour
         mHealthComp = GetComponent<HealthComponent>();
         mRWTrace = GetComponentInChildren<RW_Trace>();
         mNavAgent = GetComponent<NavMeshAgent>();
-        mAgent = GetComponent<UtilityAIProto.UAI_Agent>();
+        mAgent = GetComponent<UtilityAIProto.Agent>();
         mAnim = GetComponent<Animator>();
         mPreDestination = mRigidBody.transform.position;
         mAnim.SetInteger("WhatAmIDoing", 0);

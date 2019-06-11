@@ -8,14 +8,14 @@ namespace UtilityAIProto
     public class OverlayUIActionElement : MonoBehaviour
     {
         private OverlayUI UI;
-        private UAI_Action action;
+        private Action action;
         public Text text;
         public Text actionScoreText;
         public Slider slider;
         private ColorBlock normalColourBlock, selectedColourBlock;
         private bool bSelected = false;
 
-        public UAI_Action Action
+        public Action Action
         {
             get { return action; }
             set { action = value; }
@@ -30,7 +30,7 @@ namespace UtilityAIProto
             selectedColourBlock.normalColor = new Color(0.4f, 0.4f, 0.3f, 1.0f);
         }
 
-        public void SetAction(UAI_Action a)
+        public void SetAction(Action a)
         {
             Action = a;
             text.text = Action.name;

@@ -7,7 +7,7 @@ namespace UtilityAIProto
 {
     [Serializable]
     [AddComponentMenu("UtilityAIProto/Action")]
-    public class UAI_Action : MonoBehaviour
+    public class Action : MonoBehaviour
     {
         public float time;
 
@@ -16,7 +16,7 @@ namespace UtilityAIProto
         public int priorityLvl;
         public bool interruptible;
 
-        public List<UAI_Consideration> considerations = new List<UAI_Consideration>();
+        public List<Consideration> considerations = new List<Consideration>();
 
         private float actionScore;
 

@@ -6,10 +6,10 @@ using UnityEngine;
 namespace UtilityAIProto
 {
     [Serializable]
-    public class UAI_Consideration
+    public class Consideration
     {
         public AnimationCurve utilityCurve;
-        public UAI_Property property;
+        public Property property;
         public float weight = 1.0f;
         public bool enabled = true;
         

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UtilityAIProto
 {
     [AddComponentMenu("UtilityAIProto/Bool Property")]
-    public class UAI_PropertyBool : UAI_Property
+    public class PropertyBool : Property
     {
         public bool startVal;
         private bool currentVal;

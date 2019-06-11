@@ -7,14 +7,14 @@ namespace UtilityAIProto
 {
     public class OverlayUIAgentElement : MonoBehaviour
     {
-        private UAI_Agent agent;
+        private Agent agent;
         public Text text;
         private OverlayUI UI;
         private bool bSelected = false;
         private ColorBlock normalColourBlock, selectedColourBlock, pauseNormalColourBlock, pauseSeletedColourBlock;
         public Button button, pauseButton;
 
-        public UAI_Agent Agent
+        public Agent Agent
         {
             get { return agent; }
             set { agent = value; }
@@ -33,7 +33,7 @@ namespace UtilityAIProto
             pauseSeletedColourBlock.normalColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
         }
 
-        public void SetAgent(UAI_Agent a)
+        public void SetAgent(Agent a)
         {
             Agent = a;
             SetAgentUI();

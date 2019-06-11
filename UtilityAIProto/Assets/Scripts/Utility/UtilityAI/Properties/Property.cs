@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    public class UAI_Property : MonoBehaviour
+    public class Property : MonoBehaviour
     {
         protected float mVal;
 

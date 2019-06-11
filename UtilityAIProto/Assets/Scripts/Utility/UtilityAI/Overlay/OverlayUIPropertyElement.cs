@@ -8,13 +8,13 @@ namespace UtilityAIProto
     public class OverlayUIPropertyElement : MonoBehaviour
     {
         private OverlayUI UI;
-        private UAI_Property property;
+        private Property property;
         private bool bSelected = false;
         public Text nameText, propertyText;
         public Slider propertySlider;
         private ColorBlock normalColourBlock, selectedColourBlock;
 
-        public UAI_Property Property
+        public Property Property
         {
             get { return property; }
             set { property = value; }
@@ -30,7 +30,7 @@ namespace UtilityAIProto
             selectedColourBlock.normalColor = new Color(0.4f, 0.4f, 0.3f, 1.0f);
         }
 
-        public void SetProperty(UAI_Property p)
+        public void SetProperty(Property p)
         {
             Property = p;
             nameText.text = Property.transform.name;
@@ -61,24 +61,24 @@ namespace UtilityAIProto
 
         public void SliderValChange()
         {
-            if(Property is UAI_PropertyFloat)
+            if(Property is PropertyFloat)
             {
-                UAI_PropertyFloat tmp = (UAI_PropertyFloat)Property;
+                PropertyFloat tmp = (PropertyFloat)Property;
                 tmp.Value = propertySlider.value * tmp.maxVal + tmp.minVal;
             }
-            else if(Property is UAI_PropertyDouble)
+            else if(Property is PropertyDouble)
             {
-                UAI_PropertyDouble tmp = (UAI_PropertyDouble)Property;
+                PropertyDouble tmp = (PropertyDouble)Property;
                 tmp.Value = propertySlider.value * tmp.maxVal + tmp.minVal;
             }
-            else if (Property is UAI_PropertyInt)
+            else if (Property is PropertyInt)
             {
-                UAI_PropertyInt tmp = (UAI_PropertyInt)Property;
+                PropertyInt tmp = (PropertyInt)Property;
                 tmp.Value = Mathf.FloorToInt(propertySlider.value * tmp.maxVal + tmp.minVal);
             }
-            else if (Property is UAI_PropertyBool)
+            else if (Property is PropertyBool)
             {
-                UAI_PropertyBool tmp = (UAI_PropertyBool)Property;
+                PropertyBool tmp = (PropertyBool)Property;
                 if(propertySlider.value < 0.5)
                 {
                     tmp.Value = false;

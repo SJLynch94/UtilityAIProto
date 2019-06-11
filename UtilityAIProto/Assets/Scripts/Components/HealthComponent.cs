@@ -75,7 +75,7 @@ public class HealthComponent : MonoBehaviour
     {
         if (UI)
         {
-            if (GetComponent<UtilityAIProto.UAI_Agent>() == UI.DisplayedAgent)
+            if (GetComponent<UtilityAIProto.Agent>() == UI.DisplayedAgent)
             {
                 Camera.main.transform.parent = null;
             }

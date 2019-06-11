@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour {
             mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
             mYVal += mYOffset;
             g = Instantiate(AI, new Vector3(rx, mYVal, rz), Quaternion.identity);
-            g.GetComponent<UtilityAIProto.UAI_Agent>().agentName = "Soldier " + i;
+            g.GetComponent<UtilityAIProto.Agent>().agentName = "Soldier " + i;
             mPlayers.Add(g);
         }
     }
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour {
             mYVal = Terrain.activeTerrain.SampleHeight(new Vector3(rx, 0, rz));
             mYVal += mYOffset;
             g = Instantiate(AI, new Vector3(rx, mYVal, rz), Quaternion.identity);
-            g.GetComponent<UtilityAIProto.UAI_Agent>().agentName = "Soldier " + i;
+            g.GetComponent<UtilityAIProto.Agent>().agentName = "Soldier " + i;
             mAIList.Add(g.GetComponent<AILogic>());
         }
     }

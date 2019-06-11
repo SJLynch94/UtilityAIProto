@@ -10,14 +10,14 @@ namespace UtilityAIProto
     {
         public Text currentActionText, actionTimerText;
 
-        private UAI_Agent[] agents;
-        private UAI_Agent displayedAgent;
-        private UAI_Consideration displayedConsideration, displayedActionConsideration;
+        private Agent[] agents;
+        private Agent displayedAgent;
+        private Consideration displayedConsideration, displayedActionConsideration;
         private bool bDisplayCurve = false;
         private bool bDisplayingAgent = false;
         private bool bDisplayActionCurve = false;
 
-        public UAI_Agent DisplayedAgent
+        public Agent DisplayedAgent
         {
             get { return displayedAgent; }
         }
@@ -32,7 +32,7 @@ namespace UtilityAIProto
 	    public Image utilityCurveRenderer, actionUtilityCurveRenderer;
         public Button pauseButton;
 
-        private List<UAI_Property> agentProperties = new List<UAI_Property>();
+        private List<Property> agentProperties = new List<Property>();
         private List<GameObject> actionElements = new List<GameObject>();
         private List<GameObject> agentElements = new List<GameObject>();
         private List<GameObject> considerationElements = new List<GameObject>();
@@ -40,30 +40,30 @@ namespace UtilityAIProto
         private List<GameObject> propertyElements = new List<GameObject>();
         private List<GameObject> historyElements = new List<GameObject>();
 
-        private UAI_Action selectedAction;
-        private UAI_Property selectedProperty;
-        private UAI_Consideration selectedPropertyConsideration, selectedActionConsideration;
+        private Action selectedAction;
+        private Property selectedProperty;
+        private Consideration selectedPropertyConsideration, selectedActionConsideration;
         private ColorBlock normalColorBlock, selectedColorBlock;
 
-        public UAI_Action SelectedAction
+        public Action SelectedAction
         {
             get { return selectedAction; }
             set { selectedAction = value; }
         }
 
-        public UAI_Property SelectedProperty
+        public Property SelectedProperty
         {
             get { return selectedProperty; }
             set { selectedProperty = value; }
         }
 
-        public UAI_Consideration SelectedPropertyConsideration
+        public Consideration SelectedPropertyConsideration
         {
             get { return selectedPropertyConsideration; }
             set { selectedPropertyConsideration = value; }
         }
 
-        public UAI_Consideration SelectedActionConsideration
+        public Consideration SelectedActionConsideration
         {
             get { return selectedActionConsideration; }
             set { selectedActionConsideration = value; }
@@ -76,7 +76,7 @@ namespace UtilityAIProto
             selectedColorBlock = pauseButton.colors;
             selectedColorBlock.normalColor = new Color(0.5f, 0.5f, 0.5f, 1.0f);
 
-            agents = FindObjectsOfType(typeof(UAI_Agent)) as UAI_Agent[];
+            agents = FindObjectsOfType(typeof(Agent)) as Agent[];
 
             //// Add Agents to the UI Agents
             for(var i = 0; i < agents.Length; ++i)
@@ -95,7 +95,7 @@ namespace UtilityAIProto
             utilitySpeedText.text = "Speed: " + UAI_Time.speed.ToString("0.00") + "x";
         }
 
-        public void DisplayAgent(UAI_Agent agent, bool selected)
+        public void DisplayAgent(Agent agent, bool selected)
         {
             for(var i = 0; i < actionElements.Count; ++i)
             {
@@ -140,9 +140,9 @@ namespace UtilityAIProto
                 displayedAgent = agent;
                 bDisplayingAgent = true;
 
-                for (var i = 0; i < agent.GetComponentsInChildren<UAI_Property>().Length; ++i)
+                for (var i = 0; i < agent.GetComponentsInChildren<Property>().Length; ++i)
                 {
-                    agentProperties.Add(agent.GetComponentsInChildren<UAI_Property>()[i]);
+                    agentProperties.Add(agent.GetComponentsInChildren<Property>()[i]);
                 }
 
                 for (var i = 0; i < agentProperties.Count; ++i)
@@ -187,7 +187,7 @@ namespace UtilityAIProto
 
         }
 
-        public void DisplayConsiderations(UAI_Property property, bool selected)
+        public void DisplayConsiderations(Property property, bool selected)
         {
             for (var i = 0; i < considerationElements.Count; ++i)
             {
@@ -201,7 +201,7 @@ namespace UtilityAIProto
                 {
                     for (var i = 0; i < propertyElements.Count; ++i)
                     {
-                        UAI_Property tmpProp = propertyElements[i].GetComponent<OverlayUIPropertyElement>().Property;
+                        Property tmpProp = propertyElements[i].GetComponent<OverlayUIPropertyElement>().Property;
                         if (selectedProperty == tmpProp)
                         {
                             propertyElements[i].GetComponent<OverlayUIPropertyElement>().Select();
@@ -243,7 +243,7 @@ namespace UtilityAIProto
             }
         }
 
-        public void DisplayActionConsiderations(UAI_Action action, bool selected)
+        public void DisplayActionConsiderations(Action action, bool selected)
         {
             for (var i = 0; i < actionConsiderationElements.Count; ++i)
             {
@@ -257,7 +257,7 @@ namespace UtilityAIProto
                 {
                     for (var i = 0; i < actionElements.Count; ++i)
                     {
-                        UAI_Action tmpAction = actionElements[i].GetComponent<OverlayUIActionElement>().Action;
+                        Action tmpAction = actionElements[i].GetComponent<OverlayUIActionElement>().Action;
                         if (selectedAction == tmpAction)
                         {
                             actionElements[i].GetComponent<OverlayUIActionElement>().Select();
@@ -292,7 +292,7 @@ namespace UtilityAIProto
             }
         }
 
-        public void DisplayCurve(UAI_Consideration consideration, bool isActionConsideration, bool selected)
+        public void DisplayCurve(Consideration consideration, bool isActionConsideration, bool selected)
         {
             if (!selected)
             {
@@ -302,7 +302,7 @@ namespace UtilityAIProto
                     {
                         for (var i = 0; i < actionConsiderationElements.Count; ++i)
                         {
-                            UAI_Consideration tmpCon = actionConsiderationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
+                            Consideration tmpCon = actionConsiderationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
                             if (selectedActionConsideration == tmpCon)
                             {
                                 actionConsiderationElements[i].GetComponent<OverlayUIConsiderationElement>().Select();
@@ -322,7 +322,7 @@ namespace UtilityAIProto
                     {
                         for (var i = 0; i < considerationElements.Count; ++i)
                         {
-                            UAI_Consideration tmpCon = considerationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
+                            Consideration tmpCon = considerationElements[i].GetComponent<OverlayUIConsiderationElement>().Consideration;
                             if (selectedPropertyConsideration == tmpCon)
                             {
                                 considerationElements[i].GetComponent<OverlayUIConsiderationElement>().Select();
@@ -354,7 +354,7 @@ namespace UtilityAIProto
             }
         }
 
-        private void BuildUtilityCurve(UAI_Consideration consideration, bool isActionCon)
+        private void BuildUtilityCurve(Consideration consideration, bool isActionCon)
         {
             Texture2D texture = new Texture2D(128, 128, TextureFormat.RGBA32, false);
             for (var i = 0; i < 128; ++i)

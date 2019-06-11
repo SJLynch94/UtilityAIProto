@@ -7,7 +7,7 @@ namespace UtilityAIProto
 {
     public class CameraComponent : MonoBehaviour
     {
-        UAI_Agent agent;
+        Agent agent;
         Transform mTransform;
         OverlayUI mUI;
 

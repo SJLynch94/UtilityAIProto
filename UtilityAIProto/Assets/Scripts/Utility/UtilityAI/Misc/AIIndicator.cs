@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    public class UAI_AIIndicator : MonoBehaviour
+    public class AIIndicator : MonoBehaviour
     {
 
         private Camera cam;

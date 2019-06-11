@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UtilityAIProto
 {
-    public class UAI_Agent : MonoBehaviour
+    public class Agent : MonoBehaviour
     {
         public string agentName;
         public bool bConsoleLogging = false;
@@ -12,7 +12,7 @@ namespace UtilityAIProto
         public float secondsBetweenEvaluations = 0.0f;
         public GameObject AIIndicator;
 
-        public List<UAI_LinkedAction> linkedActions = new List<UAI_LinkedAction>();
+        public List<LinkedAction> linkedActions = new List<LinkedAction>();
 
         public List<string> actionHistory = new List<string>();
         public float actionTimer;
@@ -31,7 +31,7 @@ namespace UtilityAIProto
         }
 
         private float secondsSinceLastEval = 0.0f;
-        private UAI_Action previousAction, topAction;
+        private Action previousAction, topAction;
         private float currentActionScore;
         private bool bTiming = true;
         private bool bPaused = false;
@@ -40,13 +40,13 @@ namespace UtilityAIProto
         private static int agentEvalCounter = 0;
         private static int maxAgentEvals = 0;
 
-        public UAI_Action TopAction
+        public Action TopAction
         {
             get { return topAction; }
             set { topAction = value; }
         }
 
-        public UAI_Action PreviousAction
+        public Action PreviousAction
         {
             get { return previousAction; }
             set { previousAction = value; }
@@ -146,7 +146,7 @@ namespace UtilityAIProto
             }
         }
 
-        public void SetActionDelegate(string name, UAI_Action.Del del)
+        public void SetActionDelegate(string name, Action.Del del)
         {
             for(var i = 0; i < linkedActions.Count; ++i)
             {
@@ -247,7 +247,7 @@ namespace UtilityAIProto
         {
             int topActionPriority = TopAction.PriorityLevel;
             float topActionScore = 0.0f;
-            UAI_Action topInterruption = TopAction;
+            Action topInterruption = TopAction;
             bool validInterruption = false;
 
             for(var i = 0; i < linkedActions.Count; ++i)

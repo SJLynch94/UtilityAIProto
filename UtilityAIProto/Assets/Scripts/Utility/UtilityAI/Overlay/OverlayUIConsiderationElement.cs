@@ -8,14 +8,14 @@ namespace UtilityAIProto
     public class OverlayUIConsiderationElement : MonoBehaviour
     {
         private OverlayUI UI;
-        private UAI_Consideration consideration;
+        private Consideration consideration;
         public Text nameText, utilityText;
         public Slider utilitySlider;
         private ColorBlock normalColourBlock, selectedColourBlock;
         private bool bIsActionConsideration = false;
         private bool bSelected = false;
 
-        public UAI_Consideration Consideration
+        public Consideration Consideration
         {
             get { return consideration; }
             set { consideration = value; }
@@ -30,7 +30,7 @@ namespace UtilityAIProto
             selectedColourBlock.normalColor = new Color(0.4f, 0.4f, 0.3f, 1.0f);
         }
 
-        public void SetConsideration(UAI_Consideration c, bool isAction, string actionName)
+        public void SetConsideration(Consideration c, bool isAction, string actionName)
         {
             Consideration = c;
             bIsActionConsideration = isAction;
