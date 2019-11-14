@@ -53,6 +53,11 @@ namespace UtilityAIProto
             }
         }
 
+        /// <summary>
+        /// Loop through the considerations
+        /// If its enabled then get the Utility Score and multiply by the weight of the consideration
+        /// Average the ActionScore by the amount of actions considered
+        /// </summary>
         public void EvaluateAction()
         {
             ActionScore = 0.0f;

@@ -97,7 +97,14 @@ namespace UtilityAIProto
 
         public void DisplayAgent(Agent agent, bool selected)
         {
-            for(var i = 0; i < actionElements.Count; ++i)
+            /// <summary>
+            /// Destroy prefabs of the Agent that was selected
+            /// Clear the lists of the prefabs so we can re-use the list for the next Agent selected
+            /// 
+            /// Set The Considerations panel of the Property and Action panel in the UI to false so they are not seen any longer
+            /// Set the Selected Agents data to null
+            /// </summary>
+            for (var i = 0; i < actionElements.Count; ++i)
             {
                 Destroy(actionElements[i]);
             }
@@ -136,6 +143,14 @@ namespace UtilityAIProto
                         }
                     }
                 }
+
+                /// <summary>
+                /// Above we find the Agent selected when the displayedAgent is not null
+                /// Using the agents list of the prefabs we check which agent has been selected against the displayedAgent and call Select to display the data
+                /// Set the displayedAgent to the agent passed over and set the bDisplayingAgent boolean to true
+                /// Then set and instantiate the prefabs for the Properties of the Agent selected
+                /// Then set and instantiate the prefabs for the Actions of the Agent selected
+                /// </summary>
 
                 displayedAgent = agent;
                 bDisplayingAgent = true;
@@ -354,6 +369,15 @@ namespace UtilityAIProto
             }
         }
 
+        /// <summary>
+        /// Create a Texture to display to before applying to the image
+        /// Loop through 128 times as thats the size of the image
+        /// Calculate the y of the Curve using the Evaluation of the Curve used for the Consideration being used
+        /// Set the pixels of the texture to i for the x and the y value calculated to the y of the texture and apply the texture
+        /// 
+        /// If isActionCon is true then set the Utility Curve image in the Action Consideration panel to the texture and the size of the image rect
+        /// Otherwise apply the texture to the Utility Curve in the Property Consideration panel
+        /// </summary>
         private void BuildUtilityCurve(Consideration consideration, bool isActionCon)
         {
             Texture2D texture = new Texture2D(128, 128, TextureFormat.RGBA32, false);
@@ -376,6 +400,10 @@ namespace UtilityAIProto
             }
         }
 
+        /// <summary>
+        /// Based on the panel passed over through the Editor
+        /// we set the panels to true and false for the minimized and maximized panels of the UI
+        /// </summary>
         public void OnClickHide(string button)
         {
             if (button == "HideActionsPanel")
@@ -400,6 +428,10 @@ namespace UtilityAIProto
             }
         }
 
+        /// <summary>
+        /// Based on the panel passed over through the Editor
+        /// we set the panels to true and false for the minimized and maximized panels of the UI
+        /// </summary>
         public void OnClickShow(string button)
         {
             if (button == "ShowActionsPanel")
@@ -424,6 +456,10 @@ namespace UtilityAIProto
             }
         }
 
+        /// <summary>
+        /// Based on the int value passed over through the Editor
+        /// Set Paused of the overall Utility System and Agents to true or false or the time increase or decrease and set the UI speed text
+        /// </summary>
         public void ChangeTime(int function)
         {
             if (function == 0 && !UAI_Time.paused)
@@ -447,6 +483,9 @@ namespace UtilityAIProto
             utilitySpeedText.text = "Speed: " + UAI_Time.speed.ToString("0.00") + "x";
         }
 
+        /// <summary>
+        /// Remove the Agent from the list based on the Agent name passed over
+        /// </summary>
         public void RemoveAgent(string agentName)
         {
             //for (var i = 0; i < agents.Length; ++i)
@@ -459,7 +498,7 @@ namespace UtilityAIProto
             //    }
             //}
             //agents.Resize(ref agents, agents.Length - 1);
-
+            
             for (var i = 0; i < agentElements.Count; ++i)
             {
                 if(agentElements[i].name == agentName)
@@ -472,6 +511,11 @@ namespace UtilityAIProto
         // Update is called once per frame
         void Update()
         {
+            /// <summary>
+            /// Update the Text and Data of the prefabs for the Property, Action, Property Consideration and the Action Consideration
+            /// Destroy prefabs of the history list
+            /// Clear the list to re-use fo the next history list
+            /// </summary>
             for (var i = 0; i < propertyElements.Count; ++i)
             {
                 propertyElements[i].GetComponent<OverlayUIPropertyElement>().SetPropertyUI();
@@ -499,6 +543,16 @@ namespace UtilityAIProto
 
             historyElements.Clear();
 
+
+            /// <summary>
+            /// If the boolean bDisplayingAgent is true we set the Action and the Action timer text to the respective data from the displayAgent variable
+            /// Then loop through the Agents history and instantiate the history prefabs list and populate the list of elements
+            /// 
+            /// If bDisplayCurve is true then set the Property panel Consideration panel to update the Utility and Property Indicator of the Utility Curve
+            /// Using the values of the Property Score and Utility Score to set the local position to show the Utility Curve
+            /// If bDisplayActionCurve is true then set the Action panel Consideration panel to update the Utility and Property Indicators of the Utility Curve within the Action panel
+            /// Use the values of the Property Score and Utility Score to set the local position to show the Utility Curve again
+            /// </summary>
             if (bDisplayingAgent)
             {
                 currentActionText.text = "Current Action: \n" + displayedAgent.TopAction.name;
